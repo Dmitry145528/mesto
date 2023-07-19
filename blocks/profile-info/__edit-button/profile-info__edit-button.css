@@ -8,6 +8,15 @@
     cursor: pointer;
 }
 
-.profile-info__edit-button:active {
+.profile-info__edit-button:hover {
     opacity: 0.6;
+}
+
+@media screen and (max-width: 768px) {
+    .profile-info__edit-button {
+        width: 18px;
+        height: 18px;
+        background-size: 18px;
+        margin-left: 10px;
+    }
 }

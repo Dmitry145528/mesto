@@ -4,3 +4,15 @@
     margin: 0 auto;
     background-color: #000000;
 }
+
+@media screen and (max-width: 880px) {
+    .page {
+        margin: 0 27px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .page {
+        margin: 0 auto;
+    }
+}
