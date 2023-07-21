@@ -18,4 +18,4 @@
 
 ### Ссылка на сайт:
 
-file:///C:/Users/Дима/Desktop/mesto/index.html?
+https://dmitry145528.github.io/mesto/
