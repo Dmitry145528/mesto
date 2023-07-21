@@ -6,3 +6,9 @@
     line-height: normal;
     padding: 34px 0 0 36px;
 }
+@media screen and (max-width: 580px) {
+    .popup__header {
+        font-size: 18px;
+        padding: 25px 22px 0;
+    }
+}

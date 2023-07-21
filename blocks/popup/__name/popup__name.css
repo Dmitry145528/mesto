@@ -1,4 +1,5 @@
 .popup__name {
+    padding: 0;
     width: 100%;
     max-height: 27px;
     border: none;

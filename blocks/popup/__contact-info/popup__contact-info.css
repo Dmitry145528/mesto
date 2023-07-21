@@ -3,4 +3,11 @@
     padding: 0;
     border: none;
     margin: 54px 36px 48px;
+    max-height: 84px;
+}
+
+@media screen and (max-width: 580px) {
+    .popup__contact-info {
+        margin: 75px 22px 45px;
+    }
 }
