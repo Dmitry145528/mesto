@@ -1,0 +1,7 @@
+.profile-info__line {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    max-height: 39px;
+    max-width: 336px;
+}

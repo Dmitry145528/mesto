@@ -1,19 +1,18 @@
 .profile-info__title {
     margin: 0;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    max-width: 336px;
+    max-width: 294px;
     color: #FFF;
     font-family: 'Inter', sans-serif;
     font-size: 42px;
     font-weight: 500;
     line-height: 1.14;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 @media screen and (max-width: 768px) {
     .profile-info__title {
-        color: #FFF;
         font-size: 27px;
         line-height: normal;
         margin: 0 19px 14px 46px;
