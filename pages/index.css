@@ -1,5 +1,5 @@
 @import url('../vendor/normalize.css');
-@import url('../fonts/Inter/font.css');
+@import url('../vendor/fonts/Inter/font.css');
 @import url('../blocks/page/page.css');
 @import url('../blocks/header/header.css');
     @import url('../blocks/header/__logo/header__logo.css');
@@ -26,10 +26,7 @@
   @import url('../blocks/popup/_opened/popup_opened.css');
     @import url('../blocks/popup/__container/popup__container.css');
     @import url('../blocks/popup/__close/popup__close.css');
-    @import url('../blocks/popup/__form/popup__form.css');
     @import url('../blocks/popup/__contact-info/popup__contact-info.css');
     @import url('../blocks/popup/__header/popup__header.css');
-    @import url('../blocks/popup/__name/popup__name.css');
-    @import url('../blocks/popup/__title/popup__title.css');
+    @import url('../blocks/popup/__input/popup__input.css');
     @import url('../blocks/popup/__button/popup__button.css');
-    @import url('../blocks/popup/__button-txt/popup__button-txt.css');

@@ -5,7 +5,7 @@
     background-color: #000000;
 }
 
-@media screen and (max-width: 880px) {
+@media screen and (max-width: 950px) {
     .page {
         margin: 0 27px;
     }
