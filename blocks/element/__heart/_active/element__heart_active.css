@@ -7,7 +7,3 @@
     color: black;
     border: none;
 }
-
-.element__heart_active:hover {
-    opacity: 1;
-}
