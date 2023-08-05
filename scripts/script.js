@@ -44,6 +44,7 @@ function renderItem(item) {
     const cardElement = cardTemplate.querySelector('.element').cloneNode(true);
     cardElement.querySelector('.element__img').src = item.link;
     cardElement.querySelector('.element__title').textContent = item.name;
+    cardElement.querySelector('.element__img').alt = item.name;
 
     cardContainer.append(cardElement);
     }
@@ -105,6 +106,57 @@ let opened = () => {
 elementEditButton.addEventListener('click', opened);
 
 let closed = () => {
+  popupSection.classList.remove('popup_opened');
+  // Удаляем попап.
+  const existingPopup = popupSection.querySelector('.popup__container');
+  popupSection.removeChild(existingPopup);
+  }
+
+
+
+
+
+
+function renderPopupAddCard() {
+  const popupElement = popupTemplate.querySelector('.popup__container').cloneNode(true);
+  popupElement.querySelector('.popup__header').textContent = 'Новое место';
+  popupElement.querySelector('.popup__button').textContent = 'Сохранить';
+  popupElement.querySelector('#name').placeholder = 'Название';
+  popupElement.querySelector('#activity').placeholder = 'Ссылка на картинку';
+
+  const mainTitleCard = document.querySelector('.element__title');
+  const mainImgCard = document.querySelector('.element__img');
+
+  const nameInput = popupElement.querySelector('#name');
+  const jobInput = popupElement.querySelector('#activity');
+
+  // Добавляем новый попап
+  popupSection.append(popupElement);
+
+  const popupCloseSection = popupElement.querySelector('.popup__close');
+  popupCloseSection.addEventListener('click', closedAddCard);
+
+  const formElement = document.querySelector('.popup__form');
+  formElement.addEventListener('submit', handleFormSubmit);
+
+  function handleFormSubmit (evt) {
+    evt.preventDefault();
+
+    mainTitleCard.textContent = nameInput.value;
+    mainImgCard.src = jobInput.value;
+
+    closed();
+  }
+}
+
+let openedAddCard = () => {
+  renderPopupAddCard();
+  popupSection.classList.add('popup_opened');
+}
+
+elementAddButton.addEventListener('click', openedAddCard);
+
+let closedAddCard = () => {
   popupSection.classList.remove('popup_opened');
   // Удаляем попап.
   const existingPopup = popupSection.querySelector('.popup__container');
