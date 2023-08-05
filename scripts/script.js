@@ -39,8 +39,8 @@ function render() {
   reverseArray.forEach(renderItem);
   }
 
-  let elementActive = (event) => {
-    event.target.classList.toggle('element__heart_active');
+  let elementActive = (evt) => {
+    evt.target.classList.toggle('element__heart_active');
     }
 
 const cardTemplate = document.querySelector('.card-template').content;
@@ -54,11 +54,22 @@ function renderItem(item) {
     cardContainer.prepend(cardElement);
 
     const elementHeart = document.querySelectorAll('.element__heart');
-    
-      // Проходимся по каждому элементу и добавляем обработчик событий
+    const elementDelete = document.querySelectorAll('.element__trash');
+
+      // Проходимся по каждому элементу и добавляем обработчик событий на лайк
     elementHeart.forEach((element) => {
         element.addEventListener('click', elementActive);
         });
+
+      // Проходимся по каждому элементу и добавляем обработчик событий на корзину 
+    elementDelete.forEach((element) => {
+        element.addEventListener('click', deletedElement);
+          });
+
+    function deletedElement (evt){
+        const currentItem = evt.target.closest('.element') // получаем родителя кнопки
+        currentItem.remove();
+        }
     }
   
   // Вызываем функцию render, чтобы отобразить карточки на странице
