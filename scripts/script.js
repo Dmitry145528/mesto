@@ -39,38 +39,38 @@ function render() {
   reverseArray.forEach(renderItem);
   }
 
-  let elementActive = (evt) => {
-    evt.target.classList.toggle('element__heart_active');
-    }
+let elementActive = (evt) => {
+  evt.target.classList.toggle('element__heart_active');
+  }
 
 const cardTemplate = document.querySelector('.card-template').content;
   
 function renderItem(item) {
-    const cardElement = cardTemplate.querySelector('.element').cloneNode(true);
-    cardElement.querySelector('.element__img').src = item.link;
-    cardElement.querySelector('.element__title').textContent = item.name;
-    cardElement.querySelector('.element__img').alt = item.name;
+  const cardElement = cardTemplate.querySelector('.element').cloneNode(true);
+  cardElement.querySelector('.element__img').src = item.link;
+  cardElement.querySelector('.element__title').textContent = item.name;
+  cardElement.querySelector('.element__img').alt = item.name;
 
-    cardContainer.prepend(cardElement);
+  cardContainer.prepend(cardElement);
 
-    const elementHeart = document.querySelectorAll('.element__heart');
-    const elementDelete = document.querySelectorAll('.element__trash');
+  const elementHeart = document.querySelectorAll('.element__heart');
+  const elementDelete = document.querySelectorAll('.element__trash');
 
       // Проходимся по каждому элементу и добавляем обработчик событий на лайк
-    elementHeart.forEach((element) => {
-        element.addEventListener('click', elementActive);
-        });
+  elementHeart.forEach((element) => {
+    element.addEventListener('click', elementActive);
+    });
 
       // Проходимся по каждому элементу и добавляем обработчик событий на корзину 
-    elementDelete.forEach((element) => {
-        element.addEventListener('click', deletedElement);
-          });
+  elementDelete.forEach((element) => {
+    element.addEventListener('click', deletedElement);
+    });
 
-    function deletedElement (evt){
-        const currentItem = evt.target.closest('.element') // получаем родителя кнопки
-        currentItem.remove();
-        }
+  function deletedElement (evt){
+    const currentItem = evt.target.closest('.element') // получаем родителя кнопки
+    currentItem.remove();
     }
+  }
   
   // Вызываем функцию render, чтобы отобразить карточки на странице
   render();
@@ -82,6 +82,7 @@ function renderPopup() {
   const popupElement = popupTemplate.querySelector('.popup__container').cloneNode(true);
   popupElement.querySelector('.popup__header').textContent = 'Редактировать профиль';
   popupElement.querySelector('.popup__button').textContent = 'Сохранить';
+  popupElement.querySelector('.popup__button').setAttribute('aria-label', 'Кнопка с надписью сохранить');
   popupElement.querySelector('#name').placeholder = 'Имя и Фамилия';
   popupElement.querySelector('#activity').placeholder = 'Деятельность';
 
@@ -128,7 +129,8 @@ let closed = () => {
 function renderPopupAddCard() {
   const popupElement = popupTemplate.querySelector('.popup__container').cloneNode(true);
   popupElement.querySelector('.popup__header').textContent = 'Новое место';
-  popupElement.querySelector('.popup__button').textContent = 'Сохранить';
+  popupElement.querySelector('.popup__button').textContent = 'Создать';
+  popupElement.querySelector('.popup__button').setAttribute('aria-label', 'Кнопка с надписью создать');
   popupElement.querySelector('#name').placeholder = 'Название';
   popupElement.querySelector('#activity').placeholder = 'Ссылка на картинку';
 
