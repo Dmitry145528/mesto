@@ -114,10 +114,6 @@ let closed = () => {
   }
 
 
-
-
-
-
 function renderPopupAddCard() {
   const popupElement = popupTemplate.querySelector('.popup__container').cloneNode(true);
   popupElement.querySelector('.popup__header').textContent = 'Новое место';
