@@ -35,10 +35,15 @@ const initialCards = [
   ];
 
 function render() {
-  initialCards.forEach(renderItem);
+  const reverseArray = initialCards.reverse();
+  reverseArray.forEach(renderItem);
   }
 
-const cardTemplate = document.querySelector('.templateEl').content;
+  let elementActive = (event) => {
+    event.target.classList.toggle('element__heart_active');
+    }
+
+const cardTemplate = document.querySelector('.card-template').content;
   
 function renderItem(item) {
     const cardElement = cardTemplate.querySelector('.element').cloneNode(true);
@@ -46,22 +51,18 @@ function renderItem(item) {
     cardElement.querySelector('.element__title').textContent = item.name;
     cardElement.querySelector('.element__img').alt = item.name;
 
-    cardContainer.append(cardElement);
+    cardContainer.prepend(cardElement);
+
+    const elementHeart = document.querySelectorAll('.element__heart');
+    
+      // Проходимся по каждому элементу и добавляем обработчик событий
+    elementHeart.forEach((element) => {
+        element.addEventListener('click', elementActive);
+        });
     }
   
   // Вызываем функцию render, чтобы отобразить карточки на странице
   render();
-
-const elementHeart = document.querySelectorAll('.element__heart');
-
-let elementActive = (event) => {
-    event.target.classList.toggle('element__heart_active');
-    }
-
-  // Проходимся по каждому элементу и добавляем обработчик событий
-elementHeart.forEach((element) => {
-    element.addEventListener('click', elementActive);
-});
 
 
 const popupTemplate = document.querySelector('.popup-template').content;
@@ -124,11 +125,8 @@ function renderPopupAddCard() {
   popupElement.querySelector('#name').placeholder = 'Название';
   popupElement.querySelector('#activity').placeholder = 'Ссылка на картинку';
 
-  const mainTitleCard = document.querySelector('.element__title');
-  const mainImgCard = document.querySelector('.element__img');
-
   const nameInput = popupElement.querySelector('#name');
-  const jobInput = popupElement.querySelector('#activity');
+  const imgInput = popupElement.querySelector('#activity');
 
   // Добавляем новый попап
   popupSection.append(popupElement);
@@ -139,13 +137,28 @@ function renderPopupAddCard() {
   const formElement = document.querySelector('.popup__form');
   formElement.addEventListener('submit', handleFormSubmit);
 
-  function handleFormSubmit (evt) {
+  function handleFormSubmit(evt) {
     evt.preventDefault();
+  
+    // Получаем значения из формы
+    const nameValue = nameInput.value;
+    const imgValue = imgInput.value;
+  
+    // Создаем новый объект с данными из формы
+    const newCard = {
+      name: nameValue,
+      link: imgValue,
+    };
+  
+    // Добавляем новый объект в массив initialCards
+    initialCards.unshift(newCard);
+  
+    // Отображаем новую карточку на странице
+    renderItem(newCard);
 
-    mainTitleCard.textContent = nameInput.value;
-    mainImgCard.src = jobInput.value;
+    closedAddCard();
 
-    closed();
+    console.log(initialCards);
   }
 }
 
@@ -162,3 +175,5 @@ let closedAddCard = () => {
   const existingPopup = popupSection.querySelector('.popup__container');
   popupSection.removeChild(existingPopup);
   }
+
+  
