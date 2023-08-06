@@ -89,6 +89,7 @@ function renderPopup() {
   popupElement.querySelector('.popup__button').setAttribute('aria-label', 'Кнопка с надписью сохранить');
   popupElement.querySelector('#name').placeholder = 'Имя и Фамилия';
   popupElement.querySelector('#activity').placeholder = 'Деятельность';
+  popupSection.setAttribute('style', 'background-color: rgba(0,0,0,.5);')
 
   const nameInput = popupElement.querySelector('#name');
   const jobInput = popupElement.querySelector('#activity');
@@ -137,6 +138,7 @@ function renderPopupAddCard() {
   popupElement.querySelector('.popup__button').setAttribute('aria-label', 'Кнопка с надписью создать');
   popupElement.querySelector('#name').placeholder = 'Название';
   popupElement.querySelector('#activity').placeholder = 'Ссылка на картинку';
+  popupSection.setAttribute('style', 'background-color: rgba(0,0,0,.5);')
 
   const nameInput = popupElement.querySelector('#name');
   const imgInput = popupElement.querySelector('#activity');
