@@ -194,8 +194,8 @@ function renderPopupImgCard(item) {
   popupImgElement.querySelector('.popup__image').src = item.link;
   popupImgElement.querySelector('.popup__caption').textContent = item.name;
   popupImgElement.querySelector('.popup__image').alt = item.name;
+  popupSection.setAttribute('style', 'background-color: rgba(0,0,0,.9);');
 
-  
   // Добавляем новый попап
   popupSection.append(popupImgElement);
   
