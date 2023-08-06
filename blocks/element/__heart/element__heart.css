@@ -7,7 +7,7 @@
     border: none;
 }
 
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 930px) {
     .element__heart:hover {
         opacity: 0.5;
         cursor: pointer;

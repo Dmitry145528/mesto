@@ -7,7 +7,7 @@
     height: 32px;
     background: url('../../../images/Close\ Icon.svg') center/32px no-repeat;
     top: -40px;
-    left: 438px;
+    right: -40px;
     cursor: pointer;
 }
 
@@ -21,6 +21,6 @@
         height: 20px;
         background-size: 20px;
         top: -36px;
-        left: 262px;
+        right: 0;
     }
 }
