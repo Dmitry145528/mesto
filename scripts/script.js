@@ -49,8 +49,7 @@ let elementActive = (evt) => {
   }
 
 
-  
-function renderItem(item) {
+function renderItem(item = '') {
   const cardElement = cardTemplate.querySelector('.element').cloneNode(true);
   cardElement.querySelector('.element__img').src = item.link;
   cardElement.querySelector('.element__title').textContent = item.name;
@@ -89,7 +88,7 @@ function renderPopup() {
   popupElement.querySelector('.popup__button').setAttribute('aria-label', 'Кнопка с надписью сохранить');
   popupElement.querySelector('#name').placeholder = 'Имя и Фамилия';
   popupElement.querySelector('#activity').placeholder = 'Деятельность';
-  popupSection.setAttribute('style', 'background-color: rgba(0,0,0,.5);')
+  popupSection.setAttribute('style', 'background-color: rgba(0,0,0,.5);');
 
   const nameInput = popupElement.querySelector('#name');
   const jobInput = popupElement.querySelector('#activity');
@@ -118,17 +117,24 @@ function renderPopup() {
 
 let opened = () => {
   renderPopup();
-  popupSection.classList.add('popup_opened');
+  popupSection.classList.remove('popup_closed'); // Убираем класс анимации закрытия
+  popupSection.classList.add('popup_opened'); // Добавляем класс открытия
 }
 
 elementEditButton.addEventListener('click', opened);
 
 let closed = () => {
-  popupSection.classList.remove('popup_opened');
-  // Удаляем попап.
   const existingPopup = popupSection.querySelector('.popup__container');
-  popupSection.removeChild(existingPopup);
-  }
+  
+  popupSection.addEventListener('animationend', () => {
+    popupSection.classList.remove('popup_opened', 'popup_closed');
+    if (existingPopup) {
+      popupSection.removeChild(existingPopup);
+    }
+  }, { once: true });
+
+  popupSection.classList.add('popup_closed');
+};
 
 
 function renderPopupAddCard() {
@@ -138,7 +144,7 @@ function renderPopupAddCard() {
   popupElement.querySelector('.popup__button').setAttribute('aria-label', 'Кнопка с надписью создать');
   popupElement.querySelector('#name').placeholder = 'Название';
   popupElement.querySelector('#activity').placeholder = 'Ссылка на картинку';
-  popupSection.setAttribute('style', 'background-color: rgba(0,0,0,.5);')
+  popupSection.setAttribute('style', 'background-color: rgba(0,0,0,.5);');
 
   const nameInput = popupElement.querySelector('#name');
   const imgInput = popupElement.querySelector('#activity');
@@ -183,12 +189,17 @@ let openedAddCard = () => {
 elementAddButton.addEventListener('click', openedAddCard);
 
 let closedAddCard = () => {
-  popupSection.classList.remove('popup_opened');
-  // Удаляем попап.
   const existingPopup = popupSection.querySelector('.popup__container');
-  popupSection.removeChild(existingPopup);
-  }
+  
+  popupSection.addEventListener('animationend', () => {
+    popupSection.classList.remove('popup_opened', 'popup_closed');
+    if (existingPopup) {
+      popupSection.removeChild(existingPopup);
+    }
+  }, { once: true });
 
+  popupSection.classList.add('popup_closed');
+};
 
 
 function renderPopupImgCard(item) {
@@ -219,10 +230,16 @@ const imgItem = {
   };
 element.addEventListener('click', () => openedImgCard(imgItem));
 });
-
+  
 let closedImgCard = () => {
-  popupSection.classList.remove('popup_opened');
-  // Удаляем попап.
   const existingPopup = popupSection.querySelector('.popup__container-img');
-  popupSection.removeChild(existingPopup);
-  }
+  
+  popupSection.addEventListener('animationend', () => {
+    popupSection.classList.remove('popup_opened', 'popup_closed');
+    if (existingPopup) {
+      popupSection.removeChild(existingPopup);
+    }
+  }, { once: true });
+
+  popupSection.classList.add('popup_closed');
+};
