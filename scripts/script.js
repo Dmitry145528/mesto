@@ -1,3 +1,4 @@
+let ind = 7;
 const cardContainer = document.querySelector('.elements__grid-items');
 const cardTemplate = document.querySelector('.card-template').content;
 const popupTemplate = document.querySelector('.popup-template').content;
@@ -13,27 +14,33 @@ const mainTitle = document.querySelector('.profile-info__subtitle');
 const initialCards = [
     {
       name: 'Архыз',
-      link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg'
+      link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg',
+      ind: 1
     },
     {
       name: 'Челябинская область',
-      link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg'
+      link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg',
+      ind: 2
     },
     {
       name: 'Иваново',
-      link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg'
+      link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg',
+      ind: 3
     },
     {
       name: 'Камчатка',
-      link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg'
+      link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg',
+      ind: 4
     },
     {
       name: 'Холмогорский район',
-      link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg'
+      link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg',
+      ind: 5
     },
     {
       name: 'Байкал',
-      link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg'
+      link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg',
+      ind: 6
     }
   ];
 
@@ -42,20 +49,35 @@ const initialCards = [
 function render() {
   const reverseArray = initialCards.reverse();
   reverseArray.forEach(renderItem);
-  }
+}
 
 let elementActive = (evt) => {
   evt.target.classList.toggle('element__heart_active');
-  }
+}
+
+function deletedElement (evt){
+  const currentItem = evt.target.closest('.element'); // получаем родителя кнопки
+  currentItem.exist = false;
+  currentItem.remove();
+}
 
 
-function renderItem(item = '') {
+function renderItem(item) {
   const cardElement = cardTemplate.querySelector('.element').cloneNode(true);
+  let isLink = true;
+  if (!(item.link.startsWith('https://') || item.link.startsWith('http://') || item.link.startsWith('www.'))) isLink = false;
+  if (!(item.link.endsWith('.png') || item.link.endsWith('.jpg') || item.link.endsWith('.jpeg') || item.link.endsWith('.svg'))) isLink = false;
+  if (!isLink) {
+    item.link = 'https://sun9-52.userapi.com/impg/rwuKgkkpRnDQYDx56xO9Kc9KKMkKNKZUxC2BsQ/UGG81lHQNeI.jpg?size=898x594&quality=96&sign=4f363299df63fdff53381468eee50134&c_uniq_tag=B7AMEwk0IsNlkyCjQ77bzDwSGi68fyS5aOHElmk9dXA&type=album';
+  }
   cardElement.querySelector('.element__img').src = item.link;
+  if (item.name == '') {
+    item.name = 'Пустая карточка';
+  }
   cardElement.querySelector('.element__title').textContent = item.name;
   cardElement.querySelector('.element__img').alt = item.name;
-  
-
+  cardElement.setAttribute('exist', true);
+  cardElement.setAttribute('ind', item.ind);
   cardContainer.prepend(cardElement);
 
   const elementHeart = document.querySelectorAll('.element__heart');
@@ -64,21 +86,18 @@ function renderItem(item = '') {
       // Проходимся по каждому элементу и добавляем обработчик событий на лайк
   elementHeart.forEach((element) => {
     element.addEventListener('click', elementActive);
-    });
+  });
 
       // Проходимся по каждому элементу и добавляем обработчик событий на корзину 
   elementDelete.forEach((element) => {
     element.addEventListener('click', deletedElement);
-    });
+  });
 
-  function deletedElement (evt){
-    const currentItem = evt.target.closest('.element') // получаем родителя кнопки
-    currentItem.remove();
-    }
-  }
+  return cardElement;
+}
   
-  // Вызываем функцию render, чтобы отобразить карточки на странице
-  render();
+// Вызываем функцию render, чтобы отобразить карточки на странице
+render();
 
 
 function renderPopup() {
@@ -169,14 +188,16 @@ function renderPopupAddCard() {
     const newCard = {
       name: nameValue,
       link: imgValue,
+      ind: ind
     };
-  
+    ind += 1;
     // Добавляем новый объект в массив initialCards
     initialCards.unshift(newCard);
   
     // Отображаем новую карточку на странице
-    renderItem(newCard);
+    let card = renderItem(newCard);
 
+    card.addEventListener('click', () => openedImgCard(newCard));
     closedAddCard();
   }
 }
@@ -214,21 +235,35 @@ function renderPopupImgCard(item) {
   
   const popupCloseSection = popupImgElement.querySelector('.popup__close');
   popupCloseSection.addEventListener('click', closedImgCard);
-  }
+}
   
 let openedImgCard = (item) => {
-  renderPopupImgCard(item);
-  popupSection.classList.add('popup_opened');
+  const elementWithIndex = document.querySelectorAll('.element');
+  function findElementWithMatchingIndex(elementWithIndex, ind) {
+    for (let i = 0; i < elementWithIndex.length; i++) {
+      const element = elementWithIndex[i];
+      if (element.getAttribute('ind') === `${ind}`) {
+        return element;
+      }
+    }
+    return null; // Если нет подходящего элемента
   }
+  const matchingElement = findElementWithMatchingIndex(elementWithIndex, item.ind);
+  if (matchingElement != null) {
+    renderPopupImgCard(item);
+    popupSection.classList.add('popup_opened');
+  }
+}
   
 const elementImgButtons = document.querySelectorAll('.element__img');
 
 elementImgButtons.forEach((element) => {
-const imgItem = {
-  name: element.alt,
-  link: element.src
+  const imgItem = {
+    name: element.alt,
+    link: element.src,
+    ind: element.parentElement.getAttribute('ind')
   };
-element.addEventListener('click', () => openedImgCard(imgItem));
+  element.addEventListener('click', () => openedImgCard(imgItem));
 });
   
 let closedImgCard = () => {
