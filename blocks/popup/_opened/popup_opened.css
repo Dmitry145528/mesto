@@ -1,4 +1,4 @@
 .popup_opened {
-    display: flex;
-    animation: fadeIn 0.7s;
+    opacity: 1;
+    visibility: visible;
 }
