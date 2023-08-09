@@ -40,6 +40,7 @@ function deletedElement (evt){
 }
 
 
+// Функция для генерации карточек и их функциональности 
 function renderItem(item) {
   const cardElement = cardTemplate.querySelector('.element').cloneNode(true);
   if (item.link == '') {
@@ -116,7 +117,6 @@ function handleEditFormSubmit (evt) {
   closePopup(popupEditForm);
 }
 
-
 // Функция для отправки формы "Новое место"
 function handleAddFormSubmit(evt) {
   evt.preventDefault();
@@ -149,6 +149,8 @@ function handleAddFormSubmit(evt) {
 function closePopup(popupElement) {
   popupElement.classList.remove('popup_opened');
 }
+
+
 
 // Слушатель для открытия попапа "Редактировать профиль"
 elementEditButton.addEventListener('click', openPopupEditForm);
