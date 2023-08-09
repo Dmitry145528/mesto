@@ -1,10 +1,11 @@
 const cardContainer = document.querySelector('.elements__grid-items');
 const cardTemplate = document.querySelector('.card-template').content;
-const formElement = document.querySelector('.popup__form');
 
 const popupEditForm = document.querySelector('#popup_edit-profile');
 const popupAddForm = document.querySelector('#popup_add-card');
 const popupImgForm = document.querySelector('#popup_image');
+const formElementEditCard = document.querySelector('#popup_edit-profile');
+const formElementAddCard = document.querySelector('#popup_add-card');
 
 const elementEditButton = document.querySelector('.profile-info__edit-button');
 const elementAddButton = document.querySelector('.profile__addbutton');
@@ -15,20 +16,24 @@ const imgCardCloseButton = popupImgForm.querySelector('.popup__close');
 
 const nameInput = popupEditForm.querySelector('#name');
 const jobInput = popupEditForm.querySelector('#activity');
+const titleInput = popupAddForm.querySelector('#title');
+const imgInput = popupAddForm.querySelector('#img-url');
 
 const mainName = document.querySelector('.profile-info__title');
 const mainTitle = document.querySelector('.profile-info__subtitle');
 
-
+// Функция генерации карточек
 function render() {
   const reverseArray = initialCards.reverse();
   reverseArray.forEach(renderItem);
 }
 
+// Функция для изменения лайка
 const elementActive = (evt) => {
   evt.target.classList.toggle('element__heart_active');
 }
 
+// Функция для удаления карточки
 function deletedElement (evt){
   const currentItem = evt.target.closest('.element'); // получаем родителя кнопки
   currentItem.remove();
@@ -101,13 +106,8 @@ function openPopupImgForm(popupElement, item) {
   popupElement.classList.add('popup_opened');
 }
 
-// Общая функция закрытия
-function closePopup(popupElement) {
-  popupElement.classList.remove('popup_opened');
-}
-
 // Функция для отправки формы "Редактировать профиль"
-function handleFormSubmit (evt) {
+function handleEditFormSubmit (evt) {
   evt.preventDefault();
   
   mainName.textContent = nameInput.value;
@@ -117,6 +117,38 @@ function handleFormSubmit (evt) {
 }
 
 
+// Функция для отправки формы "Новое место"
+function handleAddFormSubmit(evt) {
+  evt.preventDefault();
+
+  // Получаем значения из формы
+  const nameValue = titleInput.value;
+  const imgValue = imgInput.value;
+
+  // Создаем новый объект с данными из формы
+  const newCard = {
+    name: nameValue,
+    link: imgValue,
+  };
+
+  // Добавляем новый объект в массив initialCards
+  initialCards.unshift(newCard);
+
+  // Отображаем новую карточку на странице
+  renderItem(newCard);
+
+  // После добавления карточки в массив обнуляем значения полей
+  titleInput.value = '';
+  imgInput.value = '';
+
+  // Закрываем попап
+  closePopup(popupAddForm);
+}
+
+// Общая функция закрытия
+function closePopup(popupElement) {
+  popupElement.classList.remove('popup_opened');
+}
 
 // Слушатель для открытия попапа "Редактировать профиль"
 elementEditButton.addEventListener('click', openPopupEditForm);
@@ -140,4 +172,7 @@ imgCardCloseButton.addEventListener('click', function() {
 });
 
 // Слушатель для отправки формы "Редактировать профиль"
-formElement.addEventListener('submit', handleFormSubmit);
+formElementEditCard.addEventListener('submit', handleEditFormSubmit);
+
+// Слушатель для отправки формы "Новое место"
+formElementAddCard.addEventListener('submit', handleAddFormSubmit);
