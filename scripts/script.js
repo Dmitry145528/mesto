@@ -60,14 +60,10 @@ function createCard (items) {
   imgCardElement.src = items.link;
 
   // Проходимся по создаваемому элементу и добавляем обработчик событий на лайк
-  cardElement.querySelectorAll('.element__heart').forEach(function(heartElement) {
-    heartElement.addEventListener('click', toggleLike);
-  });
+  cardElement.querySelector('.element__heart').addEventListener('click', toggleLike);
   
   // Проходимся по создаваемому элементу и добавляем обработчик событий на корзину
-  cardElement.querySelectorAll('.element__trash').forEach(function(trashElement) {
-    trashElement.addEventListener('click', deleteCard);
-  });
+  cardElement.querySelector('.element__trash').addEventListener('click', deleteCard);
 
   // Проходимся по создаваемому элементу и добавляем обработчик событий на детальный просмотр
   cardElement.querySelector('.element__img').addEventListener('click', function() {
