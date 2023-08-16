@@ -46,14 +46,6 @@ function createCard (items) {
   const titleCardElement = cardElement.querySelector('.element__title'); // Получаем доступ к заголовку
   const imgCardElement = cardElement.querySelector('.element__img'); // Получаем доступ к картинке
   
-  // Выстраиваем значения по умолчанию 
-  if (items.link == '') {
-    items.link = 'https://sun9-52.userapi.com/impg/rwuKgkkpRnDQYDx56xO9Kc9KKMkKNKZUxC2BsQ/UGG81lHQNeI.jpg?size=898x594&quality=96&sign=4f363299df63fdff53381468eee50134&c_uniq_tag=B7AMEwk0IsNlkyCjQ77bzDwSGi68fyS5aOHElmk9dXA&type=album';
-  } 
-  if (items.name == '') {
-    items.name = 'Пустая карточка';
-  }
-  
   // Заменяем значения значениями из массива объектов 
   titleCardElement.textContent = items.name;
   imgCardElement.alt = items.name;
