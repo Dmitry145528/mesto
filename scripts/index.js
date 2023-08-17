@@ -12,6 +12,7 @@ const elementAddButton = document.querySelector('.profile__addbutton'); // По�
 const editProfileCloseButton = popupEditForm.querySelector('.popup__close'); // Получаем доступ к кнопке закрытия попапа для ред. профиля
 const addCardCloseButton = popupAddForm.querySelector('.popup__close'); // Получаем доступ к кнопке закрытия попапа для созд. карточек
 const imgCardCloseButton = popupImgForm.querySelector('.popup__close'); // Получаем доступ к кнопке закрытия попапа для дет. просмотра карточки
+const closeButtons = document.querySelectorAll('.popup__close'); // Получаем доступ к кнопке закрытия для оверлея
 
 const nameInput = popupEditForm.querySelector('#name'); // Получаем доступ к вводу имени в профиле
 const jobInput = popupEditForm.querySelector('#activity'); // Получаем доступ к вводу деятельности в профиле
@@ -150,6 +151,23 @@ function submitAddCardForm(evt) {
 function closePopup(popup) {
   popup.classList.remove('popup_opened');
 }
+
+//// Находим все кнопки закрытия попапов и добавляем обработчики
+closeButtons.forEach(btn => {
+  const popup = btn.closest('.popup'); // Находим ближайший попап к кнопке
+  popup.addEventListener('mousedown', popupCloseOverlay); // Добавляем обработчик на нажатие мыши на попапе
+  btn.addEventListener('click', () => closePopup(popup)); // Добавляем обработчик клика на кнопку закрытия
+});
+
+// Функция для закрытия попапов через оверлей
+function popupCloseOverlay(event) {
+  if (event.target === event.currentTarget) {
+    // Если событие произошло непосредственно на попапе (а не на его содержимом)
+    closePopup(event.target); // Закрываем попапы
+  }
+}
+
+
 
 // Функция закрытия попапа "Редактировать профиль"
 function closeEditPopup() {
