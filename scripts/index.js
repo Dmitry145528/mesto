@@ -167,7 +167,14 @@ function popupCloseOverlay(event) {
   }
 }
 
-
+// функция для закрытия каждого попапа по кнопке Escape
+function closeWithKey (evt) {
+  if (evt.key === "Escape") {
+    closePopup(popupEditForm);
+    closePopup(popupAddForm);
+    closePopup(popupImgForm);
+  }
+}
 
 // Функция закрытия попапа "Редактировать профиль"
 function closeEditPopup() {
@@ -204,6 +211,9 @@ popupEditForm.addEventListener('submit', submitEditProfileForm);
 
 // Слушатель для отправки формы "Новое место"
 popupAddForm.addEventListener('submit', submitAddCardForm);
-// Вызываем функцию createItems, чтобы отобразить карточки на странице
 
+// Слушатель для закрытия попапов по кнопке Esc
+document.addEventListener('keyup', closeWithKey);
+
+// Вызываем функцию createItems, чтобы отобразить карточки на странице
 createItems();
