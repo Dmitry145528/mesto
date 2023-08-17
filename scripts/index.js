@@ -83,8 +83,19 @@ function openPopup(popup) {
 
 // Функция для открытия попапа "Редактировать профиль"
 function openEditPopup() {
+
   nameInput.value = mainName.textContent;
   jobInput.value = mainTitle.textContent;
+
+  // Находим кнопку отправки внутри формы
+  const submitButtonElement = popupEditForm.querySelector(configForm.submitButtonSelector);
+
+  // Проверяем валидность всех полей внутри формы, используя метод checkValidity() для каждого
+  const inputList = Array.from(popupEditForm.querySelectorAll(configForm.inputSelector));
+  const isFormValid = inputList.every((inputElement) => inputElement.checkValidity());
+ 
+  // Передаем общую валидность формы в функцию для обновления состояния кнопки
+  toggleButtonState(submitButtonElement, isFormValid, configForm);
   openPopup(popupEditForm);
 }
 
@@ -107,7 +118,7 @@ function submitEditProfileForm (evt) {
   
   mainName.textContent = nameInput.value;
   mainTitle.textContent = jobInput.value;
-
+  
   closePopup(popupEditForm);
 }
 
