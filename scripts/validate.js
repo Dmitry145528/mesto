@@ -41,7 +41,6 @@ function toggleButtonState(buttonElement, isActive, configForm){
     }
   }
 
-
 // Установка обработчиков событий на форму
 const setEventListeners = (formElement, configForm) => {
     const inputList = Array.from(formElement.querySelectorAll(configForm.inputSelector));

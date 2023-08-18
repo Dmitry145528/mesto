@@ -9,9 +9,6 @@ const cardForm = popupAddForm.querySelector('.popup__form'); // Получаем
 const elementEditButton = document.querySelector('.profile-info__edit-button'); // Получаем доступ к кнопке ред. профиля
 const elementAddButton = document.querySelector('.profile__addbutton'); // Получаем доступ к кнопке созд. карточек
 
-const editProfileCloseButton = popupEditForm.querySelector('.popup__close'); // Получаем доступ к кнопке закрытия попапа для ред. профиля
-const addCardCloseButton = popupAddForm.querySelector('.popup__close'); // Получаем доступ к кнопке закрытия попапа для созд. карточек
-const imgCardCloseButton = popupImgForm.querySelector('.popup__close'); // Получаем доступ к кнопке закрытия попапа для дет. просмотра карточки
 const closeButtons = document.querySelectorAll('.popup__close'); // Получаем доступ к кнопке закрытия для оверлея
 
 const nameInput = popupEditForm.querySelector('#name'); // Получаем доступ к вводу имени в профиле
@@ -80,29 +77,34 @@ function deleteCard (evt){
 //Общая функция для открытия попапов
 function openPopup(popup) {
   popup.classList.add('popup_opened');
+  // Добавляем слушатель для закрытия попапов по кнопке Esc
+  document.addEventListener('keyup', closeByEscape);
+}
+
+function openPopupWithForm(popupForm) {
+  // Находим кнопку отправки внутри формы
+  const submitButtonElement = popupForm.querySelector(configForm.submitButtonSelector);
+
+  // Проверяем валидность всех полей внутри формы, используя метод checkValidity() для каждого
+  const inputList = Array.from(popupForm.querySelectorAll(configForm.inputSelector));
+  const isFormValid = inputList.every((inputElement) => inputElement.checkValidity());
+
+  // Передаем общую валидность формы в функцию для обновления состояния кнопки
+  toggleButtonState(submitButtonElement, isFormValid, configForm);
+  
+  openPopup(popupForm);
 }
 
 // Функция для открытия попапа "Редактировать профиль"
 function openEditPopup() {
-
   nameInput.value = mainName.textContent;
   jobInput.value = mainTitle.textContent;
-
-  // Находим кнопку отправки внутри формы
-  const submitButtonElement = popupEditForm.querySelector(configForm.submitButtonSelector);
-
-  // Проверяем валидность всех полей внутри формы, используя метод checkValidity() для каждого
-  const inputList = Array.from(popupEditForm.querySelectorAll(configForm.inputSelector));
-  const isFormValid = inputList.every((inputElement) => inputElement.checkValidity());
- 
-  // Передаем общую валидность формы в функцию для обновления состояния кнопки
-  toggleButtonState(submitButtonElement, isFormValid, configForm);
-  openPopup(popupEditForm);
+  openPopupWithForm(popupEditForm);
 }
 
 // Функция для открытия попапа "Новое место"
 function openAddPopup() {
-  openPopup(popupAddForm);
+  openPopupWithForm(popupAddForm);
 }
 
 // Функция для открытия попапа "Детального просмотра"
@@ -150,6 +152,8 @@ function submitAddCardForm(evt) {
 // Общая функция закрытия
 function closePopup(popup) {
   popup.classList.remove('popup_opened');
+  // Удаляем слушатель для закрытия попапов по кнопке Esc
+  document.removeEventListener('keyup', closeByEscape);
 }
 
 //// Находим все кнопки закрытия попапов и добавляем обработчики
@@ -167,12 +171,11 @@ function popupCloseOverlay(event) {
   }
 }
 
-// функция для закрытия каждого попапа по кнопке Escape
-function closeWithKey (evt) {
-  if (evt.key === "Escape") {
-    closePopup(popupEditForm);
-    closePopup(popupAddForm);
-    closePopup(popupImgForm);
+// функция для закрытия попапа по кнопке Escape
+function closeByEscape(evt) {
+  if (evt.key === 'Escape') {
+    const openedPopup = document.querySelector('.popup_opened');
+    closePopup(openedPopup);
   }
 }
 
@@ -197,23 +200,11 @@ elementEditButton.addEventListener('click', openEditPopup);
 // Слушатель для открытия попапа "Новое место"
 elementAddButton.addEventListener('click', openAddPopup);
 
-// Слушатель для закрытия попапа "Редактировать профиль"
-editProfileCloseButton.addEventListener('click', closeEditPopup);
-
-// Слушатель для закрытия попапа "Новое место"
-addCardCloseButton.addEventListener('click', closeAddPopup);
-
-// Слушатель для закрытия попапа "Детальный просмотр"
-imgCardCloseButton.addEventListener('click', closeImgPopup);
-
 // Слушатель для отправки формы "Редактировать профиль"
 popupEditForm.addEventListener('submit', submitEditProfileForm);
 
 // Слушатель для отправки формы "Новое место"
 popupAddForm.addEventListener('submit', submitAddCardForm);
-
-// Слушатель для закрытия попапов по кнопке Esc
-document.addEventListener('keyup', closeWithKey);
 
 // Вызываем функцию createItems, чтобы отобразить карточки на странице
 createItems();
