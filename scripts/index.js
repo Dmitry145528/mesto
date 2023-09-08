@@ -1,9 +1,5 @@
-const cardContainer = document.querySelector('.elements__grid-items'); // Место куда рендерим карточки
-const cardTemplate = document.querySelector('.card-template').content; // Получаем доступ к темплейт тегу, а точнее к его содержимому
-
 const popupEditForm = document.querySelector('#popup_edit-profile'); // Получаем доступ к попапу для ред. профиля 
 const popupAddForm = document.querySelector('#popup_add-card'); // Получаем доступ к попапу для созд. карточек
-const popupImgForm = document.querySelector('#popup_image'); // Получаем доступ к попапу для дет. просмотра карточки
 const cardForm = popupAddForm.querySelector('.popup__form'); // Получаем доступ к форме внутри попапа
 
 const elementEditButton = document.querySelector('.profile-info__edit-button'); // Получаем доступ к кнопке ред. профиля
@@ -19,59 +15,16 @@ const imgInput = popupAddForm.querySelector('#img-url'); // Получаем д�
 const mainName = document.querySelector('.profile-info__title'); // Получаем доступ к уже введённому имени
 const mainTitle = document.querySelector('.profile-info__subtitle'); // Получаем доступ к уже введённой деятельности
 
-const popupImg = document.querySelector('.popup__image'); // Получаем доступ к картинке 
-const popupCaption = document.querySelector('.popup__caption'); // Получаем доступ к подписи
+initialCards.forEach((item) => {
+  renderInitialCards(item)
+});
 
-// Функция перебора массива карточек
-function createItems() {
-  const reverseArray = initialCards.reverse();
-  reverseArray.forEach(renderInitialCards);
-}
+function renderInitialCards(item) {
+  const card = new Card(item, '.card-template');
+  const cardElement = card.generateCard();
 
-// Функция генерации начальных карточек 
-function renderInitialCards(items) {
-  const item = createCard(items);
-  addCard(item);
-}
-
-//Функция добавления карточки в разметку
-function addCard (item) {
-  cardContainer.prepend(item);
-}
-
-function createCard (items) {
-  const cardElement = cardTemplate.querySelector('.element').cloneNode(true);
-  const titleCardElement = cardElement.querySelector('.element__title'); // Получаем доступ к заголовку
-  const imgCardElement = cardElement.querySelector('.element__img'); // Получаем доступ к картинке
-  
-  // Заменяем значения значениями из массива объектов 
-  titleCardElement.textContent = items.name;
-  imgCardElement.alt = items.name;
-  imgCardElement.src = items.link;
-
-  // Проходимся по создаваемому элементу и добавляем обработчик событий на лайк
-  cardElement.querySelector('.element__heart').addEventListener('click', toggleLike);
-  
-  // Проходимся по создаваемому элементу и добавляем обработчик событий на корзину
-  cardElement.querySelector('.element__trash').addEventListener('click', deleteCard);
-
-  // Проходимся по создаваемому элементу и добавляем обработчик событий на детальный просмотр
-  cardElement.querySelector('.element__img').addEventListener('click', function() {
-    openPopupImgForm(items.name, items.link);
-  });
-
-  return cardElement;
-}
-
-// Функция для изменения лайка
-const toggleLike = (evt) => {
-  evt.target.classList.toggle('element__heart_active');
-}
-
-// Функция для удаления карточки
-function deleteCard (evt){
-  const currentItem = evt.target.closest('.element'); // получаем родителя кнопки
-  currentItem.remove();
+  // Добавляем в DOM
+  document.querySelector('.elements__grid-items').prepend(cardElement);
 }
 
 //Общая функция для открытия попапов
@@ -81,38 +34,16 @@ function openPopup(popup) {
   document.addEventListener('keyup', closeByEscape);
 }
 
-function openPopupWithForm(popupForm) {
-  // Находим кнопку отправки внутри формы
-  const submitButtonElement = popupForm.querySelector(configForm.submitButtonSelector);
-
-  // Проверяем валидность всех полей внутри формы, используя метод checkValidity() для каждого
-  const inputList = Array.from(popupForm.querySelectorAll(configForm.inputSelector));
-  const isFormValid = inputList.every((inputElement) => inputElement.checkValidity());
-
-  // Передаем общую валидность формы в функцию для обновления состояния кнопки
-  toggleButtonState(submitButtonElement, isFormValid, configForm);
-  
-  openPopup(popupForm);
-}
-
 // Функция для открытия попапа "Редактировать профиль"
 function openEditPopup() {
   nameInput.value = mainName.textContent;
   jobInput.value = mainTitle.textContent;
-  openPopupWithForm(popupEditForm);
+  openPopup(popupEditForm);
 }
 
 // Функция для открытия попапа "Новое место"
 function openAddPopup() {
-  openPopupWithForm(popupAddForm);
-}
-
-// Функция для открытия попапа "Детального просмотра"
-function openPopupImgForm(itemName, itemImg) {
-  popupImg.src = itemImg;
-  popupImg.alt = itemName;
-  popupCaption.textContent = itemName;
-  openPopup(popupImgForm);
+  openPopup(popupAddForm);
 }
 
 // Функция для отправки формы "Редактировать профиль"
@@ -172,26 +103,11 @@ function popupCloseOverlay(event) {
 }
 
 // функция для закрытия попапа по кнопке Escape
-function closeByEscape(evt) {
+export function closeByEscape(evt) {
   if (evt.key === 'Escape') {
     const openedPopup = document.querySelector('.popup_opened');
     closePopup(openedPopup);
   }
-}
-
-// Функция закрытия попапа "Редактировать профиль"
-function closeEditPopup() {
-  closePopup(popupEditForm);
-}
-
-// Функция закрытия попапа "Новое место"
-function closeAddPopup() {
-  closePopup(popupAddForm);
-}
-
-// Функция закрытия попапа "Детальный просмотр"
-function closeImgPopup() {
-  closePopup(popupImgForm);
 }
 
 // Слушатель для открытия попапа "Редактировать профиль"
@@ -206,5 +122,4 @@ popupEditForm.addEventListener('submit', submitEditProfileForm);
 // Слушатель для отправки формы "Новое место"
 popupAddForm.addEventListener('submit', submitAddCardForm);
 
-// Вызываем функцию createItems, чтобы отобразить карточки на странице
-createItems();
+import { Card } from './Card.js';
