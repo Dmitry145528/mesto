@@ -54,11 +54,3 @@ export class FormValidator {
     this._toggleButtonState();
   }
 }
-
-// Получите все формы на странице и создайте экземпляр FormValidator для каждой формы
-const formElements = document.querySelectorAll(configForm.formSelector);
-formElements.forEach((formElement) => {
-  const formValidator = new FormValidator(configForm, formElement);
-  formValidator.enableValidation();
-});
-  

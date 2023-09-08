@@ -1,6 +1,7 @@
 const popupEditForm = document.querySelector('#popup_edit-profile'); // Получаем доступ к попапу для ред. профиля 
 const popupAddForm = document.querySelector('#popup_add-card'); // Получаем доступ к попапу для созд. карточек
-const cardForm = popupAddForm.querySelector('.popup__form'); // Получаем доступ к форме внутри попапа
+const cardEditForm = popupEditForm.querySelector('.popup__form'); // Получаем доступ к форме внутри попапа ред. профиля
+const cardAddForm = popupAddForm.querySelector('.popup__form'); // Получаем доступ к форме внутри попапа добавления карточки
 
 const elementEditButton = document.querySelector('.profile-info__edit-button'); // Получаем доступ к кнопке ред. профиля
 const elementAddButton = document.querySelector('.profile__addbutton'); // Получаем доступ к кнопке созд. карточек
@@ -27,6 +28,13 @@ function renderInitialCards(item) {
   document.querySelector('.elements__grid-items').prepend(cardElement);
 }
 
+// Получите все формы на странице и создайте экземпляр FormValidator для каждой формы
+const formElements = document.querySelectorAll(configForm.formSelector);
+formElements.forEach((formElement) => {
+  const formValidator = new FormValidator(configForm, formElement);
+  formValidator.enableValidation();
+});
+
 //Общая функция для открытия попапов
 function openPopup(popup) {
   popup.classList.add('popup_opened');
@@ -34,16 +42,32 @@ function openPopup(popup) {
   document.addEventListener('keyup', closeByEscape);
 }
 
+function openPopupWithForm(popupForm, formValidator) {
+  // Находим кнопку отправки внутри формы
+  const submitButtonElement = popupForm.querySelector(configForm.submitButtonSelector);
+
+  // Проверяем валидность всех полей внутри формы, используя метод checkValidity() для каждого
+  const inputList = Array.from(popupForm.querySelectorAll(configForm.inputSelector));
+  const isFormValid = inputList.every((inputElement) => inputElement.checkValidity());
+
+  // Передаем общую валидность формы в функцию для обновления состояния кнопки
+  formValidator._toggleButtonState(submitButtonElement, isFormValid);
+  
+  openPopup(popupForm);
+}
+
 // Функция для открытия попапа "Редактировать профиль"
 function openEditPopup() {
   nameInput.value = mainName.textContent;
   jobInput.value = mainTitle.textContent;
-  openPopup(popupEditForm);
+  const formValidator = new FormValidator(configForm, cardEditForm);
+  openPopupWithForm(popupEditForm, formValidator);
 }
 
 // Функция для открытия попапа "Новое место"
 function openAddPopup() {
-  openPopup(popupAddForm);
+  const formValidator = new FormValidator(configForm, cardAddForm);
+  openPopupWithForm(popupAddForm, formValidator);
 }
 
 // Функция для отправки формы "Редактировать профиль"
@@ -74,7 +98,7 @@ function submitAddCardForm(evt) {
   renderInitialCards(newCard);
 
   // Обнуляем значения полей в форме
-  cardForm.reset();
+  cardAddForm.reset();
 
   // Закрываем попап
   closePopup(popupAddForm);
@@ -123,3 +147,4 @@ popupEditForm.addEventListener('submit', submitEditProfileForm);
 popupAddForm.addEventListener('submit', submitAddCardForm);
 
 import { Card } from './Card.js';
+import { FormValidator } from './FormValidator.js';
