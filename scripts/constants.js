@@ -33,3 +33,5 @@ const configForm = {
   inactiveButtonClass: 'popup__button_disabled',
   inputErrorClass: 'popup__input_type_error',
 };
+
+export {initialCards, configForm};

@@ -1,21 +1,25 @@
+// Создаём класс валидации формы и экспортируем
 export class FormValidator {
   constructor(config, formElement) {
     this._config = config;
     this._formElement = formElement;
   }
 
+  // Метод для отображения сообщения об ошибке в поле ввода
   _showInputError(inputElement) {
     const errorElement = this._formElement.querySelector(`.${inputElement.id}-error`);
     inputElement.classList.add(this._config.inputErrorClass);
     errorElement.textContent = inputElement.validationMessage;
   }
 
+  // Метод для скрытия сообщения об ошибке в поле ввода
   _hideInputError(inputElement) {
     const errorElement = this._formElement.querySelector(`.${inputElement.id}-error`);
     inputElement.classList.remove(this._config.inputErrorClass);
     errorElement.textContent = '';
   }
 
+  // Метод для проверки валидности поля ввода
   _checkInputValidity(inputElement) {
     if (inputElement.validity.valid) {
       this._hideInputError(inputElement);
@@ -24,6 +28,7 @@ export class FormValidator {
     }
   }
 
+  // Метод для изменения состояния кнопки в зависимости от валидности формы
   _toggleButtonState() {
     const submitButtonElement = this._formElement.querySelector(this._config.submitButtonSelector);
     if (this._formElement.checkValidity()) {
@@ -35,6 +40,7 @@ export class FormValidator {
     }
   }
 
+  // Метод установки обработчиков событий на форму
   _setEventListeners() {
     const inputList = Array.from(this._formElement.querySelectorAll(this._config.inputSelector));
     inputList.forEach((inputElement) => {
@@ -45,6 +51,7 @@ export class FormValidator {
     });
   }
 
+  // Метод включения валидации формы
   enableValidation() {
     this._formElement.addEventListener('submit', (evt) => {
       evt.preventDefault();
