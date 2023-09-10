@@ -50,7 +50,7 @@ addCardFormValidator.enableValidation();
 export function openPopup(popup) {
   popup.classList.add("popup_opened");
 
-  document.addEventListener("keyup", handleCloseByClick);
+  document.addEventListener("keyup", closeByEscape);
 }
 
 // Функция для открытия попапа "Редактировать профиль"
@@ -108,23 +108,30 @@ function closePopup(popup) {
   popup.classList.remove("popup_opened");
 
   // Удаляем слушатель для закрытия попапов по кнопке Esc
-  document.removeEventListener("keyup", handleCloseByClick);
+  document.removeEventListener("keyup", closeByEscape);
 }
 
 //// Находим все кнопки закрытия попапов и добавляем обработчики
 closeButtons.forEach((btn) => {
   const popup = btn.closest(".popup"); // Находим ближайший попап к кнопке
   popup.addEventListener("mousedown", handleCloseByClick); // Добавляем обработчик на нажатие мыши на попапе
-  btn.addEventListener("click", () => closePopup(popup)); // Добавляем обработчик клика на кнопку закрытия
 });
 
-// Функция для закрытия попапов через оверлей и 'Escape'
+// Функция для закрытия попапов
 function handleCloseByClick(evt) {
   if (
     evt.target === evt.currentTarget ||
     evt.target.classList.contains("popup__close")
   ) {
     closePopup(evt.currentTarget);
+  }
+}
+
+// функция для закрытия попапа по кнопке Escape
+function closeByEscape(evt) {
+  if (evt.key === "Escape") {
+    const openedPopup = document.querySelector(".popup_opened");
+    closePopup(openedPopup);
   }
 }
 
