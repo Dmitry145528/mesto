@@ -1,90 +1,81 @@
-import { Card } from './Card.js'; // Ипортируем класс карточки в index.js
-import { FormValidator } from './FormValidator.js'; // Импортируем класс валидации в index.js
-import { initialCards, configForm } from './constants.js'; // Импортируем статичные данные в index.js
+import { Card } from "./Card.js"; // Ипортируем класс карточки в index.js
+import { FormValidator } from "./FormValidator.js"; // Импортируем класс валидации в index.js
+import { initialCards, configForm } from "./constants.js"; // Импортируем статичные данные в index.js
 
-const popupEditForm = document.querySelector('#popup_edit-profile'); // Получаем доступ к попапу для ред. профиля 
-const popupAddForm = document.querySelector('#popup_add-card'); // Получаем доступ к попапу для созд. карточек
-const cardEditForm = popupEditForm.querySelector('.popup__form'); // Получаем доступ к форме внутри попапа ред. профиля
-const cardAddForm = popupAddForm.querySelector('.popup__form'); // Получаем доступ к форме внутри попапа добавления карточки
+const popupEditForm = document.querySelector("#popup_edit-profile"); // Получаем доступ к попапу для ред. профиля
+const popupAddForm = document.querySelector("#popup_add-card"); // Получаем доступ к попапу для созд. карточек
+const cardEditForm = popupEditForm.querySelector(".popup__form"); // Получаем доступ к форме внутри попапа ред. профиля
+const cardAddForm = popupAddForm.querySelector(".popup__form"); // Получаем доступ к форме внутри попапа добавления карточки
+const cardContainer = document.querySelector(".elements__grid-items");
 
-const elementEditButton = document.querySelector('.profile-info__edit-button'); // Получаем доступ к кнопке ред. профиля
-const elementAddButton = document.querySelector('.profile__addbutton'); // Получаем доступ к кнопке созд. карточек
+export const popupImgForm = document.querySelector("#popup_image"); // Получаем доступ к попапу для дет. просмотра карточки
+export const popupImg = document.querySelector(".popup__image"); // Получаем доступ к картинке
+export const popupCaption = document.querySelector(".popup__caption"); // Получаем доступ к подписи
 
-const closeButtons = document.querySelectorAll('.popup__close'); // Получаем доступ к кнопке закрытия для оверлея
+const elementEditButton = document.querySelector(".profile-info__edit-button"); // Получаем доступ к кнопке ред. профиля
+const elementAddButton = document.querySelector(".profile__addbutton"); // Получаем доступ к кнопке созд. карточек
 
-const nameInput = popupEditForm.querySelector('#name'); // Получаем доступ к вводу имени в профиле
-const jobInput = popupEditForm.querySelector('#activity'); // Получаем доступ к вводу деятельности в профиле
-const titleInput = popupAddForm.querySelector('#title'); // Получаем доступ к вводу названия добавляемой карточки 
-const imgInput = popupAddForm.querySelector('#img-url'); // Получаем доступ к вводу картинки добавляемой карточки 
+const closeButtons = document.querySelectorAll(".popup__close"); // Получаем доступ к кнопке закрытия для оверлея
 
-const mainName = document.querySelector('.profile-info__title'); // Получаем доступ к уже введённому имени
-const mainTitle = document.querySelector('.profile-info__subtitle'); // Получаем доступ к уже введённой деятельности
+const nameInput = popupEditForm.querySelector("#name"); // Получаем доступ к вводу имени в профиле
+const jobInput = popupEditForm.querySelector("#activity"); // Получаем доступ к вводу деятельности в профиле
+const titleInput = popupAddForm.querySelector("#title"); // Получаем доступ к вводу названия добавляемой карточки
+const imgInput = popupAddForm.querySelector("#img-url"); // Получаем доступ к вводу картинки добавляемой карточки
 
-// Функция генерации начальных карточек 
+const mainName = document.querySelector(".profile-info__title"); // Получаем доступ к уже введённому имени
+const mainTitle = document.querySelector(".profile-info__subtitle"); // Получаем доступ к уже введённой деятельности
+
 initialCards.forEach((item) => {
-  renderInitialCards(item);
+  renderCard(item);
 });
 
-// Функция генерации карточки
-function renderInitialCards(item) {
-  const card = new Card(item, '.card-template');
-  const cardElement = card.generateCard();
-
-  // Добавляем в DOM
-  document.querySelector('.elements__grid-items').prepend(cardElement);
+function createCard(item, templateSelector) {
+  const card = new Card(item, templateSelector);
+  return card.generateCard();
 }
 
-// Получаем все формы на странице и создаём экземпляр FormValidator для каждой формы
-const formElements = document.querySelectorAll(configForm.formSelector);
-formElements.forEach((formElement) => {
-  const formValidator = new FormValidator(configForm, formElement);
-  formValidator.enableValidation();
-});
+function renderCard(item) {
+  const cardElement = createCard(item, ".card-template");
+  cardContainer.prepend(cardElement);
+}
+
+// Создаём экземпляры FormValidator для обеих форм
+const editProfileFormValidator = new FormValidator(configForm, cardEditForm);
+editProfileFormValidator.enableValidation();
+
+const addCardFormValidator = new FormValidator(configForm, cardAddForm);
+addCardFormValidator.enableValidation();
 
 //Общая функция для открытия попапов
-function openPopup(popup) {
-  popup.classList.add('popup_opened');
+export function openPopup(popup) {
+  popup.classList.add("popup_opened");
 
-  // Добавляем слушатель для закрытия попапов по кнопке Esc
-  document.addEventListener('keyup', closeByEscape);
-}
-
-function openPopupWithForm(popupForm, formValidator) {
-
-  // Находим кнопку отправки внутри формы
-  const submitButtonElement = popupForm.querySelector(configForm.submitButtonSelector);
-
-  // Проверяем валидность всех полей внутри формы, используя метод checkValidity() для каждого
-  const inputList = Array.from(popupForm.querySelectorAll(configForm.inputSelector));
-  const isFormValid = inputList.every((inputElement) => inputElement.checkValidity());
-
-  // Передаем общую валидность формы в функцию для обновления состояния кнопки
-  formValidator._toggleButtonState(submitButtonElement, isFormValid);
-  
-  openPopup(popupForm);
+  document.addEventListener("keyup", handleCloseByClick);
 }
 
 // Функция для открытия попапа "Редактировать профиль"
 function openEditPopup() {
   nameInput.value = mainName.textContent;
   jobInput.value = mainTitle.textContent;
-  const formValidator = new FormValidator(configForm, cardEditForm);
-  openPopupWithForm(popupEditForm, formValidator);
+  openPopup(popupEditForm);
+
+  editProfileFormValidator.resetValidation();
 }
 
 // Функция для открытия попапа "Новое место"
 function openAddPopup() {
-  const formValidator = new FormValidator(configForm, cardAddForm);
-  openPopupWithForm(popupAddForm, formValidator);
+  openPopup(popupAddForm);
+
+  addCardFormValidator.resetValidation();
 }
 
 // Функция для отправки формы "Редактировать профиль"
-function submitEditProfileForm (evt) {
+function submitEditProfileForm(evt) {
   evt.preventDefault();
-  
+
   mainName.textContent = nameInput.value;
   mainTitle.textContent = jobInput.value;
-  
+
   closePopup(popupEditForm);
 }
 
@@ -103,7 +94,7 @@ function submitAddCardForm(evt) {
   };
 
   // Генерируем новую карточку
-  renderInitialCards(newCard);
+  renderCard(newCard);
 
   // Обнуляем значения полей в форме
   cardAddForm.reset();
@@ -114,44 +105,37 @@ function submitAddCardForm(evt) {
 
 // Общая функция закрытия
 function closePopup(popup) {
-  popup.classList.remove('popup_opened');
+  popup.classList.remove("popup_opened");
 
   // Удаляем слушатель для закрытия попапов по кнопке Esc
-  document.removeEventListener('keyup', closeByEscape);
+  document.removeEventListener("keyup", handleCloseByClick);
 }
 
 //// Находим все кнопки закрытия попапов и добавляем обработчики
-closeButtons.forEach(btn => {
-  const popup = btn.closest('.popup'); // Находим ближайший попап к кнопке
-  popup.addEventListener('mousedown', popupCloseOverlay); // Добавляем обработчик на нажатие мыши на попапе
-  btn.addEventListener('click', () => closePopup(popup)); // Добавляем обработчик клика на кнопку закрытия
+closeButtons.forEach((btn) => {
+  const popup = btn.closest(".popup"); // Находим ближайший попап к кнопке
+  popup.addEventListener("mousedown", handleCloseByClick); // Добавляем обработчик на нажатие мыши на попапе
+  btn.addEventListener("click", () => closePopup(popup)); // Добавляем обработчик клика на кнопку закрытия
 });
 
-// Функция для закрытия попапов через оверлей
-function popupCloseOverlay(event) {
-  if (event.target === event.currentTarget) {
-
-    // Если событие произошло непосредственно на попапе (а не на его содержимом)
-    closePopup(event.target); // Закрываем попапы
-  }
-}
-
-// функция для закрытия попапа по кнопке Escape
-export function closeByEscape(evt) {
-  if (evt.key === 'Escape') {
-    const openedPopup = document.querySelector('.popup_opened');
-    closePopup(openedPopup);
+// Функция для закрытия попапов через оверлей и 'Escape'
+function handleCloseByClick(evt) {
+  if (
+    evt.target === evt.currentTarget ||
+    evt.target.classList.contains("popup__close")
+  ) {
+    closePopup(evt.currentTarget);
   }
 }
 
 // Слушатель для открытия попапа "Редактировать профиль"
-elementEditButton.addEventListener('click', openEditPopup);
+elementEditButton.addEventListener("click", openEditPopup);
 
 // Слушатель для открытия попапа "Новое место"
-elementAddButton.addEventListener('click', openAddPopup);
+elementAddButton.addEventListener("click", openAddPopup);
 
 // Слушатель для отправки формы "Редактировать профиль"
-popupEditForm.addEventListener('submit', submitEditProfileForm);
+popupEditForm.addEventListener("submit", submitEditProfileForm);
 
 // Слушатель для отправки формы "Новое место"
-popupAddForm.addEventListener('submit', submitAddCardForm);
+popupAddForm.addEventListener("submit", submitAddCardForm);
