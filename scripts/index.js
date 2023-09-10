@@ -111,11 +111,11 @@ function closePopup(popup) {
   document.removeEventListener("keyup", closeByEscape);
 }
 
-//// Находим все кнопки закрытия попапов и добавляем обработчики
-closeButtons.forEach((btn) => {
-  const popup = btn.closest(".popup"); // Находим ближайший попап к кнопке
-  popup.addEventListener("mousedown", handleCloseByClick); // Добавляем обработчик на нажатие мыши на попапе
-});
+const popups = Array.from(document.querySelectorAll('.popup'))
+
+popups.forEach((popup) => {
+    popup.addEventListener('click', handleCloseByClick)
+})
 
 // Функция для закрытия попапов
 function handleCloseByClick(evt) {
