@@ -4,7 +4,7 @@
     min-height: 50px;
     border: 2px solid white;
     border-radius: 2px;
-    background: url(../../../images/Add\ button.svg) center/22px no-repeat black;
+    background: url('../../../images/Add-button.svg') center/22px no-repeat black;
     cursor: pointer;
 }
 

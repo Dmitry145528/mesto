@@ -4,7 +4,7 @@
     width: 24px;
     height: 24px;
     border: 1px solid white;
-    background: url(../../../images/Edit\ Button.svg) center/24px black;
+    background: url('../../../images/Edit-Button.svg') center/24px black;
     cursor: pointer;
 }
 
