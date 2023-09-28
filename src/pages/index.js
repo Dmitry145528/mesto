@@ -33,8 +33,8 @@ cardList.renderItems();
 
 function addCard(item) {
   const card = new Card(item, '.card-template', {
-    handleCardClick: (data) => {
-      popupWithImg.open(data);
+    handleCardClick: ({link, name}) => {
+      popupWithImg.open({link, name});
     },
   });
   return card.generateCard();
@@ -50,24 +50,20 @@ const editProfilePopup = new PopupWithForm('#popup_edit-profile', (formData) => 
   editProfilePopup.close();
 });
 
-elementEditButton.addEventListener('click', () => {
-  const currentUserInfo = userInfo.getUserInfo();
+function handleEditButtonClick() {
+  const { name, activity } = userInfo.getUserInfo();
 
-  nameInput.value = currentUserInfo.name;
-  jobInput.value = currentUserInfo.activity;
+  nameInput.value = name;
+  jobInput.value = activity;
 
   editProfileFormValidator.resetValidation();
   editProfilePopup.open();
-});
+}
+
+elementEditButton.addEventListener('click', handleEditButtonClick);
 
 const addCardPopup = new PopupWithForm('#popup_add-card', (formData) => {
-
-  const newCard = {
-    name: formData.title,
-    link: formData['img-url']
-  };
-
-  const cardElement = addCard(newCard);
+  const cardElement = addCard(formData);
   cardList.prependAddItem(cardElement);
 
   addCardPopup.close();
