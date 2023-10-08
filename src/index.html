@@ -17,6 +17,7 @@
         <div class="profile__pos-left">
           <img class="profile__avatar" src="<%=require('./images/Avatar.jpg')%>"
             alt="Цветная фотография крупным планом человека в красной шапке на улице, лицо в фокусе, фон размыт">
+          <button class="profile__avatar-button"></button>
           <div class="profile-info">
             <div class="profile-info__line">
               <h1 class="profile-info__title">Жак-Ив Кусто</h1>
@@ -75,6 +76,30 @@
       </form>
     </div>
   </div>
+  <div class="popup" id="popup_update-avatar">
+    <div class="popup__container">
+      <button class="popup__close" type="button" aria-label="Кнопка в форме крестика"></button>
+      <h2 class="popup__header">Обновить аватар</h2>
+      <form class="popup__form" action="#" name="form" method="post" novalidate>
+        <fieldset class="popup__contact-info">
+          <div class="popup__field">
+            <input class="popup__input" placeholder='Ссылка на картинку' id="avatar-url" name="link" type="url" required>
+            <span class="img-url-error popup__input-error"></span>
+          </div>
+        </fieldset>
+        <button type='submit' class='popup__button' aria-label="Кнопка с надписью сохранить">Сохранить</button>
+      </form>
+    </div>
+  </div>
+  <div class="popup" id="popup_delete-card">
+    <div class="popup__container">
+      <button class="popup__close" type="button" aria-label="Кнопка в форме крестика"></button>
+      <h2 class="popup__header">Вы уверены?</h2>
+      <form class="popup__form" action="#" name="form" method="post" novalidate>
+        <button type='submit' class='popup__button popup__button_yes' aria-label="Кнопка с надписью Да">Да</button>
+      </form>
+    </div>
+  </div>
   <div class="popup popup_popup-img-back" id="popup_image">
     <div class="popup__container-img">
       <button class="popup__close" type="button" aria-label="Кнопка в форме крестика"></button>
@@ -90,7 +115,7 @@
       <img class="element__img">
       <div class="element__pos-element">
         <h2 class="element__title"></h2>
-        <button class="element__heart" type="button" aria-label="Кнопка в виде сердца"></button>
+        <button class="element__heart" data-like="" type="button" aria-label="Кнопка в виде сердца"></button>
       </div>
     </li>
   </template>
