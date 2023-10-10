@@ -6,6 +6,7 @@ import Card from "../components/Card.js";
 import UserInfo from '../components/UserInfo.js';
 import FormValidator from "../components/FormValidator.js"; // Импортируем класс валидации в index.js
 import Api from '../components/Api.js'
+import PopupWithConfirmation from '../components/PopupWithConfirmation.js'
 import {
   configForm,
   cardContainer,
@@ -16,6 +17,7 @@ import {
   nameInput,
   jobInput
 } from "../utils/constants.js"; // Импортируем статичные данные в index.js
+import { ids } from 'webpack';
 
 const api = new Api({
   url: 'https://mesto.nomoreparties.co/v1/cohort-77',
@@ -45,7 +47,18 @@ api.getInitialCards()
   })
   .catch((err) => {
     console.log('Ошибка запроса списка карточек', err);
-  });
+  }); 
+
+// const popupWithConfirm = new PopupWithConfirmation('#popup_delete-card', (cardId) => {
+//   api.deleteCard(cardId) // Метод deleteCard должен принимать ID карточки
+//     .then(() => {
+//       card.removeCard();
+//       popupWithConfirm.close();
+//     })
+//     .catch((err) => console.log(`Ошибка при удалении карточки: ${err}`));
+// });
+
+// popupWithConfirm.setEventListeners();
 
 function addCard(item) {
   const card = new Card(item, '.card-template', {
@@ -53,15 +66,10 @@ function addCard(item) {
       popupWithImg.open({ link, name });
     },
     handleDeleteClick: (id) => {
-      console.log('handleDeleteClick, id=', id);
-
-      api.deleteCard(id)
-        .then(() => {
-          card.removeCard()
-        })
-        .catch((err) => console.log(`Ошибка при удалении карточки: ${err}`));
+      popupWithConfirm.open(id);
     }
   });
+
   return card.generateCard();
 }
 
