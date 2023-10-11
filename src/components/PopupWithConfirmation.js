@@ -7,7 +7,7 @@ export default class PopupWithConfirmation extends Popup {
     this._clbSubmit = clbSubmit;
     this._form = this._popupSelector.querySelector('.popup__form');
     this._submitButton = this._form.querySelector('.popup__button');
-    this._isFormSubmitHandlerSet = false; // Флаг для обработчика отправки формы
+    this._isFormSubmitHandlerSet = false;
   }
 
   setEventListeners() {
@@ -16,15 +16,15 @@ export default class PopupWithConfirmation extends Popup {
     if (!this._isFormSubmitHandlerSet) {
       this._form.addEventListener("submit", (evt) => {
         evt.preventDefault();
-        const cardId = this._cardId; // Получаем ID карточки
-        this._clbSubmit(cardId); // Вызываем колбэк с ID карточки
+        this._clbSubmit(this._Id, this._card);
         this._isFormSubmitHandlerSet = true;
       });
     }
   }
 
-  open(cardId) {
-    this._cardId = cardId; // Сохраняем ID карточки
+  open(Id, card) {
+    this._Id = Id;
+    this._card = card;
     super.open();
   }
 

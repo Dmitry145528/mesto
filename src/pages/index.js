@@ -17,7 +17,6 @@ import {
   nameInput,
   jobInput
 } from "../utils/constants.js"; // Импортируем статичные данные в index.js
-import { ids } from 'webpack';
 
 const api = new Api({
   url: 'https://mesto.nomoreparties.co/v1/cohort-77',
@@ -47,18 +46,18 @@ api.getInitialCards()
   })
   .catch((err) => {
     console.log('Ошибка запроса списка карточек', err);
-  }); 
+  });
 
-// const popupWithConfirm = new PopupWithConfirmation('#popup_delete-card', (cardId) => {
-//   api.deleteCard(cardId) // Метод deleteCard должен принимать ID карточки
-//     .then(() => {
-//       card.removeCard();
-//       popupWithConfirm.close();
-//     })
-//     .catch((err) => console.log(`Ошибка при удалении карточки: ${err}`));
-// });
+const popupWithConfirm = new PopupWithConfirmation('#popup_delete-card', (cardId, card) => {
+  api.deleteCard(cardId, card) // Принимает Id и экземпляр класса карточки.
+    .then(() => {
+      card.removeCard();
+      popupWithConfirm.close();
+    })
+    .catch((err) => console.log(`Ошибка при удалении карточки: ${err}`));
+});
 
-// popupWithConfirm.setEventListeners();
+popupWithConfirm.setEventListeners();
 
 function addCard(item) {
   const card = new Card(item, '.card-template', {
@@ -66,12 +65,21 @@ function addCard(item) {
       popupWithImg.open({ link, name });
     },
     handleDeleteClick: (id) => {
-      popupWithConfirm.open(id);
+      popupWithConfirm.open(id, card);
     }
   });
 
   return card.generateCard();
 }
+
+api.getMyInfo()
+  .then((res) => {
+    console.log('info = ', res);
+    userInfo.setUserInfo(res);
+  })
+  .catch((err) => {
+    console.log('Ошибка запроса списка карточек', err);
+  });
 
 const userInfo = new UserInfo({
   nameSelector: ".profile-info__title",
@@ -83,11 +91,22 @@ const editProfilePopup = new PopupWithForm('#popup_edit-profile', (formData) => 
   editProfilePopup.close();
 });
 
+function setMyInfoOnServer(formData) {
+  api.setMyInfo(formData)
+    .then((res) => {
+      console.log('info = ', res);
+      userInfo.setUserInfo(res);
+    })
+    .catch((err) => {
+      console.log('Ошибка запроса списка карточек', err);
+    });
+}
+
 function handleEditButtonClick() {
-  const { name, activity } = userInfo.getUserInfo();
+  const { name, about } = userInfo.getUserInfo();
 
   nameInput.value = name;
-  jobInput.value = activity;
+  jobInput.value = about;
 
   editProfileFormValidator.resetValidation();
   editProfilePopup.open();
@@ -96,13 +115,12 @@ function handleEditButtonClick() {
 elementEditButton.addEventListener('click', handleEditButtonClick);
 
 const addCardPopup = new PopupWithForm('#popup_add-card', (formData) => {
-  const cardElement = api.addCard(formData)
+  api.addCard(formData)
     .then((newCard) => {
       const card = addCard(newCard);
       cardList.prependAddItem(card);
     })
     .catch((err) => console.log(`Ошибка при клонировании карточки: ${err}`));
-  cardList.prependAddItem(cardElement);
 
   addCardPopup.close();
   addCardFormValidator.resetValidation();

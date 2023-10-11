@@ -35,4 +35,19 @@ export default class Api {
     })
       .then((res) => onError(res))
   }
+
+  getMyInfo() {
+    return fetch(`${this._url}/users/me/`, {
+      headers: this._headers
+    })
+      .then((res) => onError(res))
+  }
+
+  setMyInfo() {
+    return fetch(`${this._url}/users/me/`, {
+      headers: this._headers,
+      method: 'PATCH',
+    })
+      .then((res) => onError(res))
+  }
 }
