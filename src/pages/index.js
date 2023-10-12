@@ -12,8 +12,10 @@ import {
   cardContainer,
   elementEditButton,
   elementAddButton,
+  elementAvatarButton,
   cardEditForm,
   cardAddForm,
+  updateAvatarForm,
   nameInput,
   jobInput
 } from "../utils/constants.js"; // Импортируем статичные данные в index.js
@@ -57,8 +59,6 @@ const popupWithConfirm = new PopupWithConfirmation('#popup_delete-card', (cardId
     .catch((err) => console.log(`Ошибка при удалении карточки: ${err}`));
 });
 
-popupWithConfirm.setEventListeners();
-
 function addCard(item) {
   const card = new Card(item, '.card-template', {
     handleCardClick: ({ link, name }) => {
@@ -72,6 +72,18 @@ function addCard(item) {
   return card.generateCard();
 }
 
+const addCardPopup = new PopupWithForm('#popup_add-card', (formData) => {
+  api.addCard(formData)
+    .then((newCard) => {
+      const card = addCard(newCard);
+      cardList.prependAddItem(card);
+    })
+    .catch((err) => console.log(`Ошибка при клонировании карточки: ${err}`));
+
+  addCardPopup.close();
+  addCardFormValidator.resetValidation();
+});
+
 api.getMyInfo()
   .then((res) => {
     console.log('info = ', res);
@@ -83,11 +95,12 @@ api.getMyInfo()
 
 const userInfo = new UserInfo({
   nameSelector: ".profile-info__title",
-  infoSelector: ".profile-info__subtitle"
+  infoSelector: ".profile-info__subtitle",
+  avatarSelector: ".profile__avatar"
 });
 
 const editProfilePopup = new PopupWithForm('#popup_edit-profile', (formData) => {
-  userInfo.setUserInfo(formData);
+  setMyInfoOnServer(formData);
   editProfilePopup.close();
 });
 
@@ -95,6 +108,17 @@ function setMyInfoOnServer(formData) {
   api.setMyInfo(formData)
     .then((res) => {
       console.log('info = ', res);
+      userInfo.setUserInfo(res);
+    })
+    .catch((err) => {
+      console.log('Ошибка запроса списка карточек', err);
+    });
+}
+
+function setUpdateAvatarOnServer(formData) {
+  api.updateAvatar(formData)
+    .then((res) => {
+      console.log('avatar = ', res);
       userInfo.setUserInfo(res);
     })
     .catch((err) => {
@@ -112,22 +136,20 @@ function handleEditButtonClick() {
   editProfilePopup.open();
 }
 
-elementEditButton.addEventListener('click', handleEditButtonClick);
-
-const addCardPopup = new PopupWithForm('#popup_add-card', (formData) => {
-  api.addCard(formData)
-    .then((newCard) => {
-      const card = addCard(newCard);
-      cardList.prependAddItem(card);
-    })
-    .catch((err) => console.log(`Ошибка при клонировании карточки: ${err}`));
-
-  addCardPopup.close();
-  addCardFormValidator.resetValidation();
+const updateAvatarPopup = new PopupWithForm('#popup_update-avatar', ({ avatar }) => {
+  setUpdateAvatarOnServer({ avatar });
+  updateAvatarPopup.close();
+  updateAvatarFormValidator.resetValidation();
 });
+
+elementEditButton.addEventListener('click', handleEditButtonClick);
 
 elementAddButton.addEventListener('click', () => {
   addCardPopup.open();
+});
+
+elementAvatarButton.addEventListener('click', () => {
+  updateAvatarPopup.open();
 });
 
 // Создаём экземпляры FormValidator для обеих форм
@@ -136,3 +158,6 @@ editProfileFormValidator.enableValidation();
 
 const addCardFormValidator = new FormValidator(configForm, cardAddForm);
 addCardFormValidator.enableValidation();
+
+const updateAvatarFormValidator = new FormValidator(configForm, updateAvatarForm);
+updateAvatarFormValidator.enableValidation();
