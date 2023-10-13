@@ -29,7 +29,6 @@ const api = new Api({
 });
 
 const popupWithImg = new PopupWithImg('#popup_image');
-popupWithImg.setEventListeners();
 
 // Создание секции для карточек
 const cardList = new Section({
@@ -50,8 +49,8 @@ api.getInitialCards()
     console.log('Ошибка запроса списка карточек', err);
   });
 
-const popupWithConfirm = new PopupWithConfirmation('#popup_delete-card', (cardId, card) => {
-  api.deleteCard(cardId, card) // Принимает Id и экземпляр класса карточки.
+const popupWithConfirm = new PopupWithConfirmation('#popup_delete-card', (_idCard, card) => {
+  api.deleteCard(_idCard, card) // Принимает Id и экземпляр класса карточки.
     .then(() => {
       card.removeCard();
       popupWithConfirm.close();
@@ -60,14 +59,15 @@ const popupWithConfirm = new PopupWithConfirmation('#popup_delete-card', (cardId
 });
 
 function addCard(item) {
+  const isMyCard = (item.owner._id === userId);
   const card = new Card(item, '.card-template', {
     handleCardClick: ({ link, name }) => {
       popupWithImg.open({ link, name });
     },
-    handleDeleteClick: (id) => {
-      popupWithConfirm.open(id, card);
+    handleDeleteClick: (_idCard) => {
+      popupWithConfirm.open(_idCard, card);
     }
-  });
+  }, isMyCard);
 
   return card.generateCard();
 }
@@ -84,9 +84,13 @@ const addCardPopup = new PopupWithForm('#popup_add-card', (formData) => {
   addCardFormValidator.resetValidation();
 });
 
+let userId;
+
 api.getMyInfo()
   .then((res) => {
     console.log('info = ', res);
+    userId = res._id; // Сохраняем идентификатор текущего пользователя
+    console.log('id = ', userId);
     userInfo.setUserInfo(res);
   })
   .catch((err) => {
