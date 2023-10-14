@@ -21,3 +21,6 @@ export const cardAddForm = popupAddForm.querySelector(".popup__form"); // Пол
 export const updateAvatarForm = popupAvatarForm.querySelector(".popup__form"); // Получаем доступ к форме внутри попапа обовления аватара проф.
 export const nameInput = popupEditForm.querySelector("#name"); // Получаем доступ к вводу имени в профиле
 export const jobInput = popupEditForm.querySelector("#activity"); // Получаем доступ к вводу деятельности в профиле
+export const buttonFormAdd = cardAddForm.querySelector(configForm.submitButtonSelector); // Получаем доступ к кнопке сохранение внутри формы Доб.карт
+export const buttonFormEdit = cardEditForm.querySelector(configForm.submitButtonSelector); // Получаем доступ к кнопке сохранение внутри формы Ред.профиль
+export const buttonFormUpdate = updateAvatarForm.querySelector(configForm.submitButtonSelector); // Получаем доступ к кнопке сохранение внутри формы Обнов.аватара

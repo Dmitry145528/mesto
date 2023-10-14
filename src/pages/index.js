@@ -17,7 +17,10 @@ import {
   cardAddForm,
   updateAvatarForm,
   nameInput,
-  jobInput
+  jobInput,
+  buttonFormUpdate,
+  buttonFormEdit,
+  buttonFormAdd
 } from "../utils/constants.js"; // Импортируем статичные данные в index.js
 
 const api = new Api({
@@ -41,8 +44,6 @@ const cardList = new Section({
 //Генерация начальных карточек
 api.getInitialCards()
   .then((cards) => {
-    console.log('cards = ', cards);
-    
     cardList.renderItems(cards);
   })
   .catch((err) => {
@@ -50,7 +51,7 @@ api.getInitialCards()
   });
 
 const popupWithConfirm = new PopupWithConfirmation('#popup_delete-card', (_idCard, card) => {
-  api.deleteCard(_idCard, card) // Принимает Id и экземпляр класса карточки.
+  api.deleteCard(_idCard, card) // Принимаем Id и экземпляр класса карточки.
     .then(() => {
       card.removeCard();
       popupWithConfirm.close();
@@ -73,12 +74,17 @@ function addCard(item) {
 }
 
 const addCardPopup = new PopupWithForm('#popup_add-card', (formData) => {
+  renderLoading(true, buttonFormAdd);
   api.addCard(formData)
     .then((newCard) => {
       const card = addCard(newCard);
       cardList.prependAddItem(card);
     })
-    .catch((err) => console.log(`Ошибка при клонировании карточки: ${err}`));
+    .catch((err) => console.log(`Ошибка при клонировании карточки: ${err}`
+    ))
+    .finally(() => {
+      renderLoading(false, buttonFormAdd);
+    });
 
   addCardPopup.close();
   addCardFormValidator.resetValidation();
@@ -88,8 +94,7 @@ let userId;
 
 api.getMyInfo()
   .then((res) => {
-    console.log('info = ', res);
-    userId = res._id; // Сохраняем идентификатор текущего пользователя
+    userId = res._id; // Id пользователя
     userInfo.setUserInfo(res);
   })
   .catch((err) => {
@@ -108,24 +113,30 @@ const editProfilePopup = new PopupWithForm('#popup_edit-profile', (formData) => 
 });
 
 function setMyInfoOnServer(formData) {
+  renderLoading(true, buttonFormEdit);
   api.setMyInfo(formData)
     .then((res) => {
-      console.log('info = ', res);
       userInfo.setUserInfo(res);
     })
     .catch((err) => {
       console.log('Ошибка запроса списка карточек', err);
+    })
+    .finally(() => {
+      renderLoading(false, buttonFormEdit);
     });
 }
 
 function setUpdateAvatarOnServer(formData) {
+  renderLoading(true, buttonFormUpdate);
   api.updateAvatar(formData)
     .then((res) => {
-      console.log('avatar = ', res);
       userInfo.setUserInfo(res);
     })
     .catch((err) => {
       console.log('Ошибка запроса списка карточек', err);
+    })
+    .finally(() => {
+      renderLoading(false, buttonFormUpdate);
     });
 }
 
@@ -145,6 +156,14 @@ const updateAvatarPopup = new PopupWithForm('#popup_update-avatar', ({ avatar })
   updateAvatarFormValidator.resetValidation();
 });
 
+function renderLoading(isLoading, buttonPopup) {
+  if (isLoading) {
+    buttonPopup.textContent = 'Сохранение...';
+  } else {
+    buttonPopup.textContent = 'Сохранить';
+  }
+}
+
 elementEditButton.addEventListener('click', handleEditButtonClick);
 
 elementAddButton.addEventListener('click', () => {
@@ -155,7 +174,7 @@ elementAvatarButton.addEventListener('click', () => {
   updateAvatarPopup.open();
 });
 
-// Создаём экземпляры FormValidator для обеих форм
+// Создаём экземпляры FormValidator для форм
 const editProfileFormValidator = new FormValidator(configForm, cardEditForm);
 editProfileFormValidator.enableValidation();
 
