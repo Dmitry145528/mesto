@@ -1,5 +1,5 @@
 export default class Card {
-  constructor({ name, link, _id }, templateSelector, { handleCardClick, handleDeleteClick }, isMyCard) {
+  constructor({ name, link, _id }, templateSelector, { handleCardClick, handleDeleteClick }, isMyCard, likes, api, userId) {
     this._title = name;
     this._image = link;
     this._idCard = _id;
@@ -7,6 +7,9 @@ export default class Card {
     this._templateSelector = templateSelector;
     this._handleCardClick = handleCardClick;
     this._delClickHandler = handleDeleteClick;
+    this._likes = likes;
+    this._api = api;
+    this._isLiked = this._likes.some((like) => like._id === userId);
   }
 
   _getTemplate() {
@@ -18,6 +21,7 @@ export default class Card {
   }
 
   generateCard() {
+
     this._element = this._getTemplate();
     this._cardImage = this._element.querySelector(".element__img");
     this._cardTitle = this._element.querySelector(".element__title");
@@ -34,13 +38,43 @@ export default class Card {
       this._buttonDelete.style.display = "none"; // Скрываем корзину на чужих карточках
     }
 
+    if (this._isLiked) {
+      this._buttonLike.classList.add("element__heart_active");
+    }
+    
+    this._buttonLike.dataset.like = this._likes.length;
+
     this._setEventListeners();
 
     return this._element;
   }
 
   _toggleLike() {
-    this._buttonLike.classList.toggle("element__heart_active");
+    const currentLikes = Number(this._buttonLike.dataset.like);
+
+    if (this._isLiked) {
+      // Убираем лайк
+      this._api.deleteLike(this._idCard)
+        .then(() => {
+          this._isLiked = false;
+          this._buttonLike.classList.remove("element__heart_active");
+          this._buttonLike.dataset.like = (currentLikes - 1).toString();
+        })
+        .catch((err) => {
+          console.log(`Ошибка при снятии лайка: ${err}`);
+        });
+    } else {
+      // Ставим лайк
+      this._api.clickLike(this._idCard)
+        .then(() => {
+          this._isLiked = true;
+          this._buttonLike.classList.add("element__heart_active");
+          this._buttonLike.dataset.like = (currentLikes + 1).toString();
+        })
+        .catch((err) => {
+          console.log(`Ошибка при постановке лайка: ${err}`);
+        });
+    }
   }
 
   removeCard() {

@@ -42,7 +42,7 @@ const cardList = new Section({
 api.getInitialCards()
   .then((cards) => {
     console.log('cards = ', cards);
-
+    
     cardList.renderItems(cards);
   })
   .catch((err) => {
@@ -67,7 +67,7 @@ function addCard(item) {
     handleDeleteClick: (_idCard) => {
       popupWithConfirm.open(_idCard, card);
     }
-  }, isMyCard);
+  }, isMyCard, item.likes, api, userId);
 
   return card.generateCard();
 }
@@ -90,7 +90,6 @@ api.getMyInfo()
   .then((res) => {
     console.log('info = ', res);
     userId = res._id; // Сохраняем идентификатор текущего пользователя
-    console.log('id = ', userId);
     userInfo.setUserInfo(res);
   })
   .catch((err) => {

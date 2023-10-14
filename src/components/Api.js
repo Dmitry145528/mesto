@@ -60,4 +60,20 @@ export default class Api {
     })
       .then((res) => onError(res))
   }
+
+  deleteLike(id) {
+    return fetch(`${this._url}/cards/${id}/likes`, {
+      headers: this._headers,
+      method: 'DELETE',
+    })
+      .then((res) => onError(res))
+  }
+
+  clickLike(id) {
+    return fetch(`${this._url}/cards/${id}/likes`, {
+      headers: this._headers,
+      method: 'PUT',
+    })
+      .then((res) => onError(res))
+  }
 }
