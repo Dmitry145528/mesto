@@ -65,7 +65,7 @@ export default class Card {
         });
     } else {
       // Ставим лайк
-      this._api.clickLike(this._idCard)
+      this._api.setLiked(this._idCard)
         .then(() => {
           this._isLiked = true;
           this._buttonLike.classList.add("element__heart_active");

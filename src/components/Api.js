@@ -1,22 +1,22 @@
-const onError = (res) => {
-  if (res.ok) {
-    return res.json();
-  } else {
-    return Promise.reject(`Ошибка ${res.status} ${res.statusText}`);
-  }
-}
-
 export default class Api {
   constructor({ url, headers }) {
     this._url = url;
     this._headers = headers;
   }
 
+  _onError(res) {
+    if (res.ok) {
+      return res.json();
+    } else {
+      return Promise.reject(`Ошибка ${res.status} ${res.statusText}`);
+    }
+  }
+
   getInitialCards() {
     return fetch(`${this._url}/cards`, {
       headers: this._headers
     })
-      .then(res => onError(res))
+      .then(res => this._onError(res))
   }
 
   addCard({ name, link }) {
@@ -25,7 +25,7 @@ export default class Api {
       method: 'POST',
       body: JSON.stringify({ name, link })
     })
-      .then((res) => onError(res))
+      .then((res) => this._onError(res))
   }
 
   deleteCard(id) {
@@ -33,23 +33,23 @@ export default class Api {
       headers: this._headers,
       method: 'DELETE',
     })
-      .then((res) => onError(res))
+      .then((res) => this._onError(res))
   }
 
-  getMyInfo() {
+  getProfileInfo() {
     return fetch(`${this._url}/users/me/`, {
       headers: this._headers
     })
-      .then((res) => onError(res))
+      .then((res) => this._onError(res))
   }
 
-  setMyInfo({ name, about }) {
+  setProfileInfo({ name, about }) {
     return fetch(`${this._url}/users/me/`, {
       headers: this._headers,
       method: 'PATCH',
       body: JSON.stringify({ name, about }) // Добавьте отправку данных formData на сервер
     })
-      .then((res) => onError(res))
+      .then((res) => this._onError(res))
   }
 
   updateAvatar({ avatar }) {
@@ -58,7 +58,7 @@ export default class Api {
       method: 'PATCH',
       body: JSON.stringify({ avatar }) // Добавьте отправку данных formData на сервер
     })
-      .then((res) => onError(res))
+      .then((res) => this._onError(res))
   }
 
   deleteLike(id) {
@@ -66,14 +66,14 @@ export default class Api {
       headers: this._headers,
       method: 'DELETE',
     })
-      .then((res) => onError(res))
+      .then((res) => this._onError(res))
   }
 
-  clickLike(id) {
+  setLiked(id) {
     return fetch(`${this._url}/cards/${id}/likes`, {
       headers: this._headers,
       method: 'PUT',
     })
-      .then((res) => onError(res))
+      .then((res) => this._onError(res))
   }
 }

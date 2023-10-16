@@ -17,10 +17,7 @@ import {
   cardAddForm,
   updateAvatarForm,
   nameInput,
-  jobInput,
-  buttonFormUpdate,
-  buttonFormEdit,
-  buttonFormAdd
+  jobInput
 } from "../utils/constants.js"; // Импортируем статичные данные в index.js
 
 const api = new Api({
@@ -32,41 +29,51 @@ const api = new Api({
 });
 
 const popupWithImg = new PopupWithImg('#popup_image');
+popupWithImg.setEventListeners();
 
 // Создание секции для карточек
-const cardList = new Section({
+const cardsSection = new Section({
   renderer: (item) => {
-    const cardElement = addCard(item);
-    cardList.appendAddItem(cardElement);
+    const cardElement = createCard(item);
+    cardsSection.appendItem(cardElement);
   }
 }, cardContainer);
 
-//Генерация начальных карточек
-api.getInitialCards()
-  .then((cards) => {
-    cardList.renderItems(cards);
+let userId;
+
+Promise.all([
+  api.getProfileInfo(),
+  api.getInitialCards()
+])
+  .then(([userData, initialCards]) => {
+    // Попадаем сюда, когда оба промиса будут выполнены успешно
+    userId = userData._id;
+    userInfo.setUserInfo(userData);
+    cardsSection.renderItems(initialCards);
   })
   .catch((err) => {
-    console.log('Ошибка запроса списка карточек', err);
+    // Попадаем сюда, если один из промисов завершается ошибкой
+    console.log('Ошибка запроса', err);
   });
 
-const popupWithConfirm = new PopupWithConfirmation('#popup_delete-card', (_idCard, card) => {
-  api.deleteCard(_idCard, card) // Принимаем Id и экземпляр класса карточки.
+const popupWithConfirm = new PopupWithConfirmation('#popup_delete-card', (idCard, card) => {
+  api.deleteCard(idCard, card) // Принимаем Id и экземпляр класса карточки.
     .then(() => {
       card.removeCard();
       popupWithConfirm.close();
     })
     .catch((err) => console.log(`Ошибка при удалении карточки: ${err}`));
 });
+popupWithConfirm.setEventListeners();
 
-function addCard(item) {
-  const isMyCard = (item.owner._id === userId);
+function createCard(item) {
+  const isMyCard = item.owner._id === userId;
   const card = new Card(item, '.card-template', {
     handleCardClick: ({ link, name }) => {
       popupWithImg.open({ link, name });
     },
-    handleDeleteClick: (_idCard) => {
-      popupWithConfirm.open(_idCard, card);
+    handleDeleteClick: (idCard) => {
+      popupWithConfirm.open(idCard, card);
     }
   }, isMyCard, item.likes, api, userId);
 
@@ -74,32 +81,21 @@ function addCard(item) {
 }
 
 const addCardPopup = new PopupWithForm('#popup_add-card', (formData) => {
-  renderLoading(true, buttonFormAdd);
+  addCardPopup.setSubmitButtonText('Добавление...');
   api.addCard(formData)
     .then((newCard) => {
-      const card = addCard(newCard);
-      cardList.prependAddItem(card);
+      const card = createCard(newCard);
+      cardsSection.prependItem(card);
+      addCardPopup.close();
+      addCardFormValidator.resetValidation();
     })
     .catch((err) => console.log(`Ошибка при клонировании карточки: ${err}`
     ))
     .finally(() => {
-      renderLoading(false, buttonFormAdd);
+      addCardPopup.setSubmitButtonText('Создать');
     });
-
-  addCardPopup.close();
-  addCardFormValidator.resetValidation();
 });
-
-let userId;
-
-api.getMyInfo()
-  .then((res) => {
-    userId = res._id; // Id пользователя
-    userInfo.setUserInfo(res);
-  })
-  .catch((err) => {
-    console.log('Ошибка запроса списка карточек', err);
-  });
+addCardPopup.setEventListeners();
 
 const userInfo = new UserInfo({
   nameSelector: ".profile-info__title",
@@ -109,34 +105,41 @@ const userInfo = new UserInfo({
 
 const editProfilePopup = new PopupWithForm('#popup_edit-profile', (formData) => {
   setMyInfoOnServer(formData);
-  editProfilePopup.close();
 });
+editProfilePopup.setEventListeners();
 
 function setMyInfoOnServer(formData) {
-  renderLoading(true, buttonFormEdit);
-  api.setMyInfo(formData)
+  editProfilePopup.setSubmitButtonText('Сохранение...');
+  api.setProfileInfo(formData)
     .then((res) => {
       userInfo.setUserInfo(res);
+    })
+    .then(() => {
+      editProfilePopup.close();
     })
     .catch((err) => {
       console.log('Ошибка запроса списка карточек', err);
     })
     .finally(() => {
-      renderLoading(false, buttonFormEdit);
+      editProfilePopup.setSubmitButtonText('Сохранить');
     });
 }
 
 function setUpdateAvatarOnServer(formData) {
-  renderLoading(true, buttonFormUpdate);
+  updateAvatarPopup.setSubmitButtonText('Сохранение...');
   api.updateAvatar(formData)
     .then((res) => {
       userInfo.setUserInfo(res);
+    })
+    .then(() => {
+      updateAvatarPopup.close();
+      updateAvatarFormValidator.resetValidation();
     })
     .catch((err) => {
       console.log('Ошибка запроса списка карточек', err);
     })
     .finally(() => {
-      renderLoading(false, buttonFormUpdate);
+      updateAvatarPopup.setSubmitButtonText('Сохранить');
     });
 }
 
@@ -152,17 +155,8 @@ function handleEditButtonClick() {
 
 const updateAvatarPopup = new PopupWithForm('#popup_update-avatar', ({ avatar }) => {
   setUpdateAvatarOnServer({ avatar });
-  updateAvatarPopup.close();
-  updateAvatarFormValidator.resetValidation();
 });
-
-function renderLoading(isLoading, buttonPopup) {
-  if (isLoading) {
-    buttonPopup.textContent = 'Сохранение...';
-  } else {
-    buttonPopup.textContent = 'Сохранить';
-  }
-}
+updateAvatarPopup.setEventListeners();
 
 elementEditButton.addEventListener('click', handleEditButtonClick);
 

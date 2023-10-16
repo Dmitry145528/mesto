@@ -7,9 +7,7 @@ export const configForm = {
   inputErrorClass: "popup__input_type_error",
 };
 
-export const popupImgForm = document.querySelector("#popup_image"); // Получаем доступ к попапу для дет. просмотра карточки
 export const cardContainer = ".elements__grid-items"; //Контейнер добавления карточек
-export const closeButtons = document.querySelectorAll(".popup__close"); //Кнопки закрытия
 export const elementEditButton = document.querySelector(".profile-info__edit-button"); // Получаем доступ к кнопке ред. профиля
 export const elementAddButton = document.querySelector(".profile__addbutton"); // Получаем доступ к кнопке созд. карточек
 export const elementAvatarButton = document.querySelector(".profile__avatar-button"); // Получаем доступ к кнопке обовления аватара проф.
@@ -21,6 +19,3 @@ export const cardAddForm = popupAddForm.querySelector(".popup__form"); // Пол
 export const updateAvatarForm = popupAvatarForm.querySelector(".popup__form"); // Получаем доступ к форме внутри попапа обовления аватара проф.
 export const nameInput = popupEditForm.querySelector("#name"); // Получаем доступ к вводу имени в профиле
 export const jobInput = popupEditForm.querySelector("#activity"); // Получаем доступ к вводу деятельности в профиле
-export const buttonFormAdd = cardAddForm.querySelector(configForm.submitButtonSelector); // Получаем доступ к кнопке сохранение внутри формы Доб.карт
-export const buttonFormEdit = cardEditForm.querySelector(configForm.submitButtonSelector); // Получаем доступ к кнопке сохранение внутри формы Ред.профиль
-export const buttonFormUpdate = updateAvatarForm.querySelector(configForm.submitButtonSelector); // Получаем доступ к кнопке сохранение внутри формы Обнов.аватара
