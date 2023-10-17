@@ -56,15 +56,19 @@ Promise.all([
     console.log('Ошибка запроса', err);
   });
 
-const popupWithConfirm = new PopupWithConfirmation('#popup_delete-card', (idCard, card) => {
-  api.deleteCard(idCard, card) // Принимаем Id и экземпляр класса карточки.
+const popupWithConfirm = new PopupWithConfirmation('#popup_delete-card');
+popupWithConfirm.setEventListeners();
+
+const handleDeleteCard = (card) => {
+  api.deleteCard(card.getId(), card)
     .then(() => {
       card.removeCard();
       popupWithConfirm.close();
     })
     .catch((err) => console.log(`Ошибка при удалении карточки: ${err}`));
-});
-popupWithConfirm.setEventListeners();
+}
+
+popupWithConfirm.setCallback(handleDeleteCard);
 
 function createCard(item) {
   const isMyCard = item.owner._id === userId;
@@ -72,12 +76,37 @@ function createCard(item) {
     handleCardClick: ({ link, name }) => {
       popupWithImg.open({ link, name });
     },
-    handleDeleteClick: (idCard) => {
-      popupWithConfirm.open(idCard, card);
+    handleDeleteClick: () => {
+      popupWithConfirm.open(card);
+    },
+    handleLikeClick: () => {
+      handleLikeClick(card);
     }
-  }, isMyCard, item.likes, api, userId);
+  }, isMyCard, item.likes, userId);
 
   return card.generateCard();
+}
+
+function handleLikeClick(card) {
+  if (card.isLiked()) {
+    // Убираем лайк
+    api.deleteLike(card.getId())
+      .then((newLikes) => {
+        card.updateLikes(newLikes.likes);
+      })
+      .catch((err) => {
+        console.log(`Ошибка при снятии лайка: ${err}`);
+      });
+  } else {
+    // Ставим лайк
+    api.setLiked(card.getId())
+      .then((newLikes) => {
+        card.updateLikes(newLikes.likes);
+      })
+      .catch((err) => {
+        console.log(`Ошибка при постановке лайка: ${err}`);
+      });
+  }
 }
 
 const addCardPopup = new PopupWithForm('#popup_add-card', (formData) => {
@@ -113,8 +142,6 @@ function setMyInfoOnServer(formData) {
   api.setProfileInfo(formData)
     .then((res) => {
       userInfo.setUserInfo(res);
-    })
-    .then(() => {
       editProfilePopup.close();
     })
     .catch((err) => {
@@ -130,8 +157,6 @@ function setUpdateAvatarOnServer(formData) {
   api.updateAvatar(formData)
     .then((res) => {
       userInfo.setUserInfo(res);
-    })
-    .then(() => {
       updateAvatarPopup.close();
       updateAvatarFormValidator.resetValidation();
     })

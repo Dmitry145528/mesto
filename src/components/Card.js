@@ -1,5 +1,5 @@
 export default class Card {
-  constructor({ name, link, _id }, templateSelector, { handleCardClick, handleDeleteClick }, isMyCard, likes, api, userId) {
+  constructor({ name, link, _id }, templateSelector, { handleCardClick, handleDeleteClick, handleLikeClick }, isMyCard, likes, userId) {
     this._title = name;
     this._image = link;
     this._idCard = _id;
@@ -7,8 +7,8 @@ export default class Card {
     this._templateSelector = templateSelector;
     this._handleCardClick = handleCardClick;
     this._delClickHandler = handleDeleteClick;
+    this._handleLikeClick = handleLikeClick;
     this._likes = likes;
-    this._api = api;
     this._isLiked = this._likes.some((like) => like._id === userId);
   }
 
@@ -26,64 +26,55 @@ export default class Card {
     this._cardImage = this._element.querySelector(".element__img");
     this._cardTitle = this._element.querySelector(".element__title");
     this._buttonLike = this._element.querySelector(".element__heart");
+    this._likeCount = this._element.querySelector(".element__heart_like-count");
     this._buttonDelete = this._element.querySelector(".element__trash");
 
     this._cardTitle.textContent = this._title;
     this._cardImage.src = this._image;
     this._cardImage.alt = this._title;
 
-    if (this._isMyCard) {
-      this._buttonDelete.style.display = "block"; // Показываем корзину только на нашей карточке
-    } else {
-      this._buttonDelete.style.display = "none"; // Скрываем корзину на чужих карточках
+    if (!this._isMyCard) {
+      this._buttonDelete.style.display = "none";
     }
 
     if (this._isLiked) {
       this._buttonLike.classList.add("element__heart_active");
     }
-    
-    this._buttonLike.dataset.like = this._likes.length;
+
+    this._likeCount.textContent = this._likes.length;
 
     this._setEventListeners();
 
     return this._element;
   }
 
-  _toggleLike() {
-    const currentLikes = Number(this._buttonLike.dataset.like);
+  getId() {
+    return this._idCard;
+  }
 
-    if (this._isLiked) {
-      // Убираем лайк
-      this._api.deleteLike(this._idCard)
-        .then(() => {
-          this._isLiked = false;
-          this._buttonLike.classList.remove("element__heart_active");
-          this._buttonLike.dataset.like = (currentLikes - 1).toString();
-        })
-        .catch((err) => {
-          console.log(`Ошибка при снятии лайка: ${err}`);
-        });
+  isLiked() {
+    return this._isLiked; // Просто возвращаем состояние isLiked
+  }
+
+  updateLikes(newLikes) {
+    this._likeCount.textContent = newLikes.length;
+    if (!this._isLiked) {
+      this._buttonLike.classList.add("element__heart_active");
+      this._isLiked = true;
     } else {
-      // Ставим лайк
-      this._api.setLiked(this._idCard)
-        .then(() => {
-          this._isLiked = true;
-          this._buttonLike.classList.add("element__heart_active");
-          this._buttonLike.dataset.like = (currentLikes + 1).toString();
-        })
-        .catch((err) => {
-          console.log(`Ошибка при постановке лайка: ${err}`);
-        });
+      this._buttonLike.classList.remove("element__heart_active");
+      this._isLiked = false;
     }
   }
 
   removeCard() {
     this._element.remove();
+    this._element = null;
   }
 
   _setEventListeners() {
     this._buttonLike.addEventListener('click', () => {
-      this._toggleLike();
+      this._handleLikeClick();
     });
 
     this._buttonDelete.addEventListener("click", () => {

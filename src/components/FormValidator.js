@@ -37,16 +37,24 @@ export default class FormValidator {
     }
   }
 
+  // Метод для включения кнопки
+  _enableButton() {
+    this._submitButtonElement.disabled = false;
+    this._submitButtonElement.classList.remove(this._config.inactiveButtonClass);
+  }
+
+  // Метод для отключения кнопки
+  _disableButton() {
+    this._submitButtonElement.disabled = true;
+    this._submitButtonElement.classList.add(this._config.inactiveButtonClass);
+  }
+
   // Метод для изменения состояния кнопки в зависимости от валидности формы
   _toggleButtonState() {
     if (this._formElement.checkValidity()) {
-      this._submitButtonElement.disabled = false;
-      this._submitButtonElement.classList.remove(
-        this._config.inactiveButtonClass
-      );
+      this._enableButton();
     } else {
-      this._submitButtonElement.disabled = "disabled";
-      this._submitButtonElement.classList.add(this._config.inactiveButtonClass);
+      this._disableButton();
     }
   }
 
