@@ -59,17 +59,6 @@ Promise.all([
 const popupWithConfirm = new PopupWithConfirmation('#popup_delete-card');
 popupWithConfirm.setEventListeners();
 
-const handleDeleteCard = (card) => {
-  api.deleteCard(card.getId(), card)
-    .then(() => {
-      card.removeCard();
-      popupWithConfirm.close();
-    })
-    .catch((err) => console.log(`Ошибка при удалении карточки: ${err}`));
-}
-
-popupWithConfirm.setCallback(handleDeleteCard);
-
 function createCard(item) {
   const isMyCard = item.owner._id === userId;
   const card = new Card(item, '.card-template', {
@@ -77,7 +66,15 @@ function createCard(item) {
       popupWithImg.open({ link, name });
     },
     handleDeleteClick: () => {
-      popupWithConfirm.open(card);
+      popupWithConfirm.setCallback(() => {
+        api.deleteCard(card.getId(), card)
+        .then(() => {
+          card.removeCard();
+          popupWithConfirm.close();
+        })
+        .catch((err) => console.log(`Ошибка при удалении карточки: ${err}`));
+    });
+      popupWithConfirm.open();
     },
     handleLikeClick: () => {
       handleLikeClick(card);
