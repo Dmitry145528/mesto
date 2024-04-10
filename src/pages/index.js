@@ -118,7 +118,7 @@ const addCardPopup = new PopupWithForm('#popup_add-card', (formData) => {
     .catch((err) => console.log(`Ошибка при клонировании карточки: ${err}`
     ))
     .finally(() => {
-      addCardPopup.setSubmitButtonText('Создать');
+      addCardPopup.setSubmitButtonText('Добавить');
     });
 });
 addCardPopup.setEventListeners();
